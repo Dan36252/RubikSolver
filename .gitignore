@@ -1,0 +1,11 @@
+# created by virtualenv automatically
+src/RawData/
+src/ProcessedData/
+src/ProcessedDataOld/
+unused-data/
+bin/
+lib/
+*.zip
+*.log
+*.txt
+src/__pycache__/
