@@ -32,24 +32,57 @@ class Claw:
             "D": 1
         }
 
+        # ADJUST
+        # Angles corresponding to the extended state of each claw
+        self.extended_angles = {
+            "L" : 50,
+            "F": 50,
+            "R": 50,
+            "B": 50,
+            "D": 19
+        }
+
     def retract(self):
         self.extendor.angle = 160
 
-    def extend(self):
-        self.extendor.angle = 90
+    def extend(self, push=True):
+        offset = 0
+        if push and self.face != "D": offset = 15
+        angle = self.extended_angles[self.face]
+        self.extendor.angle = angle + offset
 
-    def twist(self, position, doOffset=True):
+    def twist(self, position, doOffset=True, slow=False):
         # position = 1, 2, or 3:  fully anticlockwise, halfway, or fully clockwise.
         if not (position == 1 or position == 2 or position == 3):
             print(f"Error: Cannot twist claw to position {position}! Must be 1, 2, or 3.")
             return
+
         target = 90 * (position - 1)
+
         if doOffset:
             offset = math.copysign(1, (90-self.angle)) * 15
-            self.twister.angle = max(0, min(180, target+offset))
-            time.sleep(0.5)
-        self.twister.angle = target
-        self.angle = target
+            self.set_angle(max(0, min(180, target+offset)))
+            time.sleep(0.8)
+
+        self.set_angle(target)
+
+    def set_angle(self, angle, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
+        # Sets the Twister servo angle, and records it in self.angle. Also has a slow turn option (slow=True).
+
+        if slow:
+            DEGREES_PER_SEC = 45  # For the slow=True option
+            step = DEGREES_PER_SEC / 100
+
+            start_angle = self.angle
+            end_angle = angle
+            cur_angle = start_angle
+            while cur_angle < end_angle:
+                cur_angle += step
+                self.twister.angle = cur_angle
+                time.sleep(0.01)
+
+        self.twister.angle = angle
+        self.angle = angle
 
     def horizontal(self, doOffset=False):
         position = self.horizontal_positions[self.face]
@@ -60,5 +93,4 @@ class Claw:
         self.twist(position, doOffset)
 
     def clockwise_90(self):
-        self.angle = min(180, self.angle + 90)
-        self.twister.angle = self.angle
+        self.set_angle(min(180, self.angle + 90))
