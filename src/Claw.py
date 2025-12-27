@@ -1,13 +1,19 @@
-import time
-import math
+import time, math
+from adafruit_motor import servo
+from PCABoard import PCABoard
 
 class Claw:
     def __init__(self, extendorChannel, twisterChannel, face):
-        # ADJUST
-        self.extendor = servo.Servo(pca_channel[extendorChannel], min_pulse=-1, max_pulse=-1)
-        self.twister = servo.Servo(pca_channel[twisterChannel], min_pulse=-1, max_pulse=-1)
+        pca = PCABoard().get()
 
+        # ADJUST
+        self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
+        self.extendor.angle = 160
+
+        self.twister = servo.Servo(pca.channels[twisterChannel], min_pulse=500, max_pulse=2400)
         self.angle = 90 # The target angle of the Twister only
+        self.twister.angle = self.angle
+
         self.face = face
 
         # ADJUST
