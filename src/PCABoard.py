@@ -9,6 +9,7 @@ class PCABoard:
         if PCABoard.single_object is None:
             i2c = board.I2C()
             PCABoard.single_object = PCA9685(i2c)
+            PCABoard.single_object.frequency = 50
             return PCABoard.single_object
         else:
             return PCABoard.single_object
