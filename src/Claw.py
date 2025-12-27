@@ -48,14 +48,16 @@ class Claw:
             "D": 19
         }
 
+        time.sleep(0.5)
+
     def retract(self):
         self.extendor.angle = 160
 
     def extend(self, push=True):
         offset = 0
-        if push and self.face != "D": offset = 15
+        if push and self.face != "D": offset = 0
         angle = self.extended_angles[self.face]
-        self.extendor.angle = angle + offset
+        self.extendor.angle = angle - offset
 
     def twist(self, position, doOffset=True, slow=False):
         # position = 1, 2, or 3:  fully anticlockwise, halfway, or fully clockwise.
