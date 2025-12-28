@@ -12,7 +12,7 @@ class Claw:
             "F": 50,
             "R": 30,
             "B": 30,
-            "D": 19
+            "D": 10
         }
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
@@ -107,3 +107,6 @@ class Claw:
 
     def clockwise_90(self, slow=True):
         self.set_angle(min(180, self.angle + 90), slow)
+
+    def anti_clockwise_90(self, slow=True):
+        self.set_angle(min(180, self.angle - 90), slow)

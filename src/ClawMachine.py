@@ -94,8 +94,8 @@ class ClawMachine:
             opposite_face = self.opposite_faces[face_move]
 
             # Hold cube tightly
-            self.claws[face_move].horizontal()
-            self.claws[opposite_face].vertical()
+            self.claws[face_move].twist(2, doOffset=False, slow=False)
+            self.claws[opposite_face].twist(3, doOffset=False, slow=False)
             time.sleep(1)
             self.claws[face_move].extend(push=True)
             self.claws[opposite_face].extend(push=True)
@@ -113,7 +113,7 @@ class ClawMachine:
 
             # Turn Cube
             self.claws[face_move].clockwise_90(slow=False)
-            self.claws[opposite_face].clockwise_90(slow=False)
+            self.claws[opposite_face].anti_clockwise_90(slow=False)
             time.sleep(2)
 
             # Reset to default position
