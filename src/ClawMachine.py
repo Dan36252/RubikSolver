@@ -208,11 +208,16 @@ class ClawMachine:
         self.claws[face].extend(push=False)
         time.sleep(0.4)
         if move_type == "":
-            self.claws[face].twist(2)
+            self.claws[face].twist(2, slow=False)
         elif move_type == "'":
-            self.claws[face].twist(2)
+            self.claws[face].twist(2, slow=False)
         elif move_type == "2":
+            self.claws[face].twist(2, slow=False)
+            self.claws[face].retract()
+            time.sleep(0.5)
             self.claws[face].twist(3, slow=False)
+            self.claws[face].extend(push=False)
+            self.claws[face].twist(2, slow=False)
         else:
             print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
         time.sleep(1)
