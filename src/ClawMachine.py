@@ -93,14 +93,24 @@ class ClawMachine:
             # Then, rotate cube 90 degrees clockwise.
 
             opposite_face = self.opposite_faces[face_move]
+            adjacent_face1 = self.adjacent_faces[face_move]
+            adjacent_face2 = self.opposite_faces[adjacent_face1]
+
+            self.claws[adjacent_face1].vertical()
+            self.claws[adjacent_face2].vertical()
 
             # Hold cube tightly
             self.claws[face_move].twist(2, doOffset=False, slow=False)
             self.claws[opposite_face].twist(3, doOffset=False, slow=False)
             time.sleep(0.7)
+            self.claws[adjacent_face1].extend(push=True)
+            self.claws[adjacent_face2].extend(push=True)
+            time.sleep(1)
             self.claws[face_move].extend(push=True)
             self.claws[opposite_face].extend(push=True)
             time.sleep(1)
+            self.claws[adjacent_face1].retract()
+            self.claws[adjacent_face2].retract()
 
             # Retract D
             self.claws["D"].retract()
