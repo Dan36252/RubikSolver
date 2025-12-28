@@ -183,7 +183,8 @@ class ClawMachine:
             self.claws[face].twist(2, False)
 
         time.sleep(2)
-
+        # TODO: we changed the face_turn to start the claw from POS 1 for clockwise and POS 3 for anticlockwise.
+        # need to adjust everything else for this change
         if face == "D":
             # If face == "D", the next step is to hold the cube tightly:
             self.claws[face].extend()

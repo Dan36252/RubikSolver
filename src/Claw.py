@@ -6,7 +6,6 @@ class Claw:
     def __init__(self, extendorChannel, twisterChannel, face):
         pca = PCABoard().get()
 
-        # ADJUST
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
         self.extendor.angle = 160
 
@@ -16,7 +15,6 @@ class Claw:
 
         self.face = face
 
-        # ADJUST
         # NOTE: horizontal and vertical positions must be such that a 90-degree
         # turn clockwise is always possible after that position.
         self.horizontal_positions = {
@@ -27,9 +25,7 @@ class Claw:
             "D": 2
         }
 
-        # ADJUST
         # (See note for horizontal_positions)
-        # For 'D', position 1 should be vertical.
         self.vertical_positions = {
             "L" : 2,
             "F": 1,
@@ -38,7 +34,6 @@ class Claw:
             "D": 1
         }
 
-        # ADJUST
         # Angles corresponding to the extended state of each claw
         self.extended_angles = {
             "L" : 55,
@@ -59,7 +54,7 @@ class Claw:
         angle = self.extended_angles[self.face]
         self.extendor.angle = angle - offset
 
-    def twist(self, position, doOffset=True, slow=False):
+    def twist(self, position, doOffset=True, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # position = 1, 2, or 3:  fully anticlockwise, halfway, or fully clockwise.
         if not (position == 1 or position == 2 or position == 3):
             print(f"Error: Cannot twist claw to position {position}! Must be 1, 2, or 3.")
@@ -69,10 +64,10 @@ class Claw:
 
         if doOffset:
             offset = math.copysign(15, (target-self.angle))
-            self.set_angle(max(0, min(180, target+offset)))
+            self.set_angle(max(0, min(180, target+offset)), slow)
             time.sleep(0.4)
         else:
-            self.set_angle(target)
+            self.set_angle(target, slow)
             time.sleep(0.4)
 
     def set_angle(self, angle, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
@@ -86,10 +81,10 @@ class Claw:
             end_angle = angle
             cur_angle = start_angle
 
-            step_dir = math.copysign(1, 90 - start_angle)
+            step_dir = math.copysign(1, end_angle - start_angle)
             step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
 
-            while cur_angle < end_angle:
+            while abs(cur_angle - end_angle) < step*2:
 
                 cur_angle = max(min(cur_angle + step, 180), 0)
                 self.twister.angle = cur_angle
