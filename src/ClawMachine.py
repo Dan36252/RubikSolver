@@ -50,6 +50,7 @@ class ClawMachine:
     def release_cube(self):
         # Simply release the hold_cube (only L and R claws)
         self.claws["L"].retract()
+        time.sleep(0.7)
         self.claws["R"].retract()
 
     def turn_cube(self, face_move):
@@ -67,7 +68,7 @@ class ClawMachine:
 
         if face_move == "D" or face_move == "U":
 
-            self.hold_cube(push=False)
+            self.hold_cube(push=True)
             time.sleep(1)
 
             self.claws["D"].retract()
@@ -92,12 +93,12 @@ class ClawMachine:
 
             opposite_face = self.opposite_faces[face_move]
 
-            # Hold cube gently
+            # Hold cube tightly
             self.claws[face_move].horizontal()
             self.claws[opposite_face].vertical()
             time.sleep(1)
-            self.claws[face_move].extend(push=False)
-            self.claws[opposite_face].extend(push=False)
+            self.claws[face_move].extend(push=True)
+            self.claws[opposite_face].extend(push=True)
             time.sleep(1)
 
             # Retract D
@@ -110,23 +111,16 @@ class ClawMachine:
             #     self.claws["D"].twist(1, False)
             # self.claws["D"].extend()
 
-            # Hold cube tightly
-            self.claws[face_move].extend(push=True)
-            self.claws[opposite_face].retract(push=True)
-            time.sleep(0.5)
-
             # Turn Cube
-            self.claws[face_move].clockwise_90()
-            self.claws[opposite_face].clockwise_90()
+            self.claws[face_move].clockwise_90(slow=False)
+            self.claws[opposite_face].clockwise_90(slow=False)
             time.sleep(2)
 
             # Reset to default position
-            self.claws[face_move].extend(push=False)
-            self.claws[opposite_face].extend(push=False)
-            time.sleep(0.8)
             self.claws["D"].extend()
             time.sleep(0.8)
             self.claws[face_move].retract()
+            time.sleep(0.7)
             self.claws[opposite_face].retract()
 
         time.sleep(1)
@@ -137,6 +131,7 @@ class ClawMachine:
         self.claws["R"].retract()
         time.sleep(0.7)
         self.claws["F"].retract()
+        time.sleep(0.7)
         self.claws["B"].retract()
         time.sleep(0.5)
 
@@ -164,6 +159,10 @@ class ClawMachine:
             self.turn_face("F", move_type)
             self.turn_cube("R")
             return
+        elif face == "D":
+            self.turn_cube("R")
+            self.turn_face("F", move_type)
+            self.turn_cube("L")
 
         # First, default position and set all claw angles
         self.default_position()
@@ -215,25 +214,20 @@ class ClawMachine:
             # Finally, reset to default position:
             self.default_position()
         else:
-            # If face != "D", the next step is to hold the cube lightly:
-            self.claws[face].extend(push=False)
-            self.claws[opposite_face].extend(push=False)
-            self.claws[adjacent_face1].extend(push=False)
-            self.claws[adjacent_face2].extend(push=False)
-            time.sleep(2)
-
-            # Then retract D:
-            self.claws["D"].retract()
-            time.sleep(2)
-
-            # Next hold the cube tightly:
+            # If face != "D", the next step is to hold the cube tightly:
             self.claws[face].extend(push=True)
             self.claws[opposite_face].extend(push=True)
             self.claws[adjacent_face1].extend(push=True)
             self.claws[adjacent_face2].extend(push=True)
-            time.sleep(2)
+            time.sleep(1)
 
-            # And rotate the face.
+            # Then retract D:
+            self.claws["D"].retract()
+            time.sleep(1)
+
+            # Then rotate the face.
+            self.claws[face].extend(push=False)
+            time.sleep(0.4)
             if move_type == "":
                 self.claws[face].twist(2)
             elif move_type == "'":
@@ -242,7 +236,7 @@ class ClawMachine:
                 self.claws[face].twist(3)
             else:
                 print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
-            time.sleep(2)
+            time.sleep(1)
 
             # Finally, reset to default position
             self.claws["D"].extend()
@@ -252,8 +246,9 @@ class ClawMachine:
             self.claws[face].retract()
             time.sleep(0.7)
             self.claws[adjacent_face1].retract()
+            time.sleep(0.7)
             self.claws[adjacent_face2].retract()
-            
+
             time.sleep(1)
 
     def center_cube(self):

@@ -105,5 +105,5 @@ class Claw:
         position = self.vertical_positions[self.face]
         self.twist(position, doOffset)
 
-    def clockwise_90(self):
-        self.set_angle(min(180, self.angle + 90))
+    def clockwise_90(self, slow=True):
+        self.set_angle(min(180, self.angle + 90), slow)
