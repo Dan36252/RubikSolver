@@ -87,8 +87,8 @@ class Claw:
         offset = 0
         offsetAngle = angle
         if doOffset:
-            offset = math.copysign(20, (target - self.angle))
-            offsetAngle = (max(0, min(180, target + offset)), slow)
+            offset = math.copysign(20, (angle - self.angle))
+            offsetAngle = (max(0, min(180, angle + offset)), slow)
 
         if slow:
             self.stepSlowly(offsetAngle)
