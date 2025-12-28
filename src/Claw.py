@@ -56,7 +56,7 @@ class Claw:
         offset = 0
         if push == False:
             if self.face == "D":
-                offset = 5
+                offset = 15
             else:
                 offset = -20
         angle = self.extended_angles[self.face]
