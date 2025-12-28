@@ -5,11 +5,11 @@ class ClawMachine:
     def __init__(self):
         # ADJUST
         self.claws = {
-            "D" : Claw(0, 1, "D"),
-            "F" : Claw(0, 1, "F"),
-            "L" : Claw(0, 1, "L"),
-            "R" : Claw(0, 1, "R"),
-            "B" : Claw(0, 1, "B"),
+            "D" : Claw(6, 7, "D"),
+            "F" : Claw(9, 13, "F"),
+            "L" : Claw(8, 12, "L"),
+            "R" : Claw(10, 14, "R"),
+            "B" : Claw(11, 15, "B"),
         }
 
         self.claws["D"].extend()
