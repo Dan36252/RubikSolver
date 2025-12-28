@@ -12,7 +12,7 @@ class Claw:
             "F": 50,
             "R": 30,
             "B": 30,
-            "D": 10
+            "D": 14
         }
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
@@ -97,13 +97,13 @@ class Claw:
         self.twister.angle = angle
         self.angle = angle
 
-    def horizontal(self, doOffset=False):
+    def horizontal(self, doOffset=False, slow=False):
         position = self.horizontal_positions[self.face]
-        self.twist(position, doOffset)
+        self.twist(position, doOffset, slow)
 
-    def vertical(self, doOffset=False):
+    def vertical(self, doOffset=False, slow=False):
         position = self.vertical_positions[self.face]
-        self.twist(position, doOffset)
+        self.twist(position, doOffset, slow)
 
     def clockwise_90(self, slow=True):
         self.set_angle(min(180, self.angle + 90), slow)

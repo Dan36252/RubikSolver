@@ -163,6 +163,7 @@ class ClawMachine:
             self.turn_cube("R")
             self.turn_face("F", move_type)
             self.turn_cube("L")
+            return
 
         # First, default position and set all claw angles
         self.default_position()
