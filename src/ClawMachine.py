@@ -134,11 +134,11 @@ class ClawMachine:
     def default_position(self):
         self.claws["D"].extend()
         self.claws["L"].retract()
-        self.claws["F"].retract()
         self.claws["R"].retract()
+        time.sleep(0.7)
+        self.claws["F"].retract()
         self.claws["B"].retract()
         time.sleep(0.5)
-        self.default_claws()
 
     def default_claws(self):
         self.claws["D"].twist(2, doOffset=False, slow=False)
@@ -245,23 +245,20 @@ class ClawMachine:
             time.sleep(2)
 
             # Finally, reset to default position
-            self.claws[opposite_face].extend(push=False)
-            self.claws[adjacent_face1].extend(push=False)
-            self.claws[adjacent_face2].extend(push=False)
-            self.claws[face].extend(push=False)
-            time.sleep(1)
-
             self.claws["D"].extend()
             time.sleep(1)
 
             self.claws[opposite_face].retract()
+            self.claws[face].retract()
+            time.sleep(0.7)
             self.claws[adjacent_face1].retract()
             self.claws[adjacent_face2].retract()
-            self.claws[face].retract()
+            
             time.sleep(1)
 
     def center_cube(self):
         self.default_position()
+        self.default_claws()
         self.claws["L"].extend(push=True)
         self.claws["F"].extend(push=True)
         self.claws["R"].extend(push=True)
