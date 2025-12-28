@@ -6,8 +6,20 @@ class Claw:
     def __init__(self, extendorChannel, twisterChannel, face):
         pca = PCABoard().get()
 
+        # Angles corresponding to the extended state of each claw
+        self.extended_angles = {
+            "L": 55,
+            "F": 50,
+            "R": 30,
+            "B": 30,
+            "D": 19
+        }
+
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
-        self.extendor.angle = 160
+        if face == "D":
+            self.extendor.angle = self.extended_angles["D"]
+        else:
+            self.extendor.angle = 160
 
         self.twister = servo.Servo(pca.channels[twisterChannel], min_pulse=500, max_pulse=2400)
         self.angle = 90 # The target angle of the Twister only
@@ -32,15 +44,6 @@ class Claw:
             "R": 2,
             "B": 1,
             "D": 1
-        }
-
-        # Angles corresponding to the extended state of each claw
-        self.extended_angles = {
-            "L" : 55,
-            "F": 50,
-            "R": 30,
-            "B": 30,
-            "D": 19
         }
 
         time.sleep(0.5)
@@ -72,19 +75,19 @@ class Claw:
 
     def set_angle(self, angle, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # Sets the Twister servo angle, and records it in self.angle. Also has a slow turn option (slow=True).
-        print(angle)
+        print(f"{angle} degrees, slow={slow}")
         if slow:
-            DEGREES_PER_SEC = 45  # For the slow=True option
-            STEPS_PER_SEC = 100
+            DEGREES_PER_SEC = 45.0  # For the slow=True option
+            STEPS_PER_SEC = 100.0
 
             start_angle = self.angle
             end_angle = angle
             cur_angle = start_angle
 
-            step_dir = math.copysign(1, end_angle - start_angle)
+            step_dir = math.copysign(1.0, end_angle - start_angle)
             step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
 
-            while abs(cur_angle - end_angle) > step*3:
+            while abs(cur_angle - end_angle) > step*3.0:
 
                 cur_angle = max(min(cur_angle + step, 180), 0)
                 self.twister.angle = cur_angle
