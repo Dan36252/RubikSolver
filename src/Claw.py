@@ -82,10 +82,10 @@ class Claw:
         # Sets the Twister servo angle, and records it in self.angle. Also has a slow turn option (slow=True).
         #print(f"{angle} degrees, slow={slow}")
         if self.face == "F":
-            angle = min(angle + 10, 180)
+            angle = min(angle + 5, 180)
 
         if slow:
-            DEGREES_PER_SEC = 90.0  # For the slow=True option
+            DEGREES_PER_SEC = 120.0  # For the slow=True option
             STEPS_PER_SEC = 100.0
 
             start_angle = self.angle
