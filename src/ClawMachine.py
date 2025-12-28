@@ -97,7 +97,7 @@ class ClawMachine:
             # Hold cube tightly
             self.claws[face_move].twist(2, doOffset=False, slow=False)
             self.claws[opposite_face].twist(3, doOffset=False, slow=False)
-            time.sleep(1)
+            time.sleep(0.7)
             self.claws[face_move].extend(push=True)
             self.claws[opposite_face].extend(push=True)
             time.sleep(1)
@@ -113,8 +113,8 @@ class ClawMachine:
             # self.claws["D"].extend()
 
             # Turn Cube
-            self.claws[face_move].clockwise_90(slow=False)
-            self.claws[opposite_face].anti_clockwise_90(slow=False)
+            self.claws[face_move].clockwise_90(doOffset=True, slow=False)
+            self.claws[opposite_face].anti_clockwise_90(doOffset=True, slow=False)
             time.sleep(2)
 
             # Release
@@ -200,7 +200,9 @@ class ClawMachine:
         time.sleep(0.7)
         self.claws[face].extend(push=True)
         self.claws[opposite_face].extend(push=True)
-        time.sleep(1)
+        time.sleep(0.7)
+        self.claws[adjacent_face2].extend(push=False)
+
 
         # Then retract D:
         self.claws["D"].retract()

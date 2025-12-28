@@ -70,40 +70,55 @@ class Claw:
 
         target = 90 * (position - 1)
 
-        if doOffset:
-            offset = math.copysign(20, (target-self.angle))
-            self.set_angle(max(0, min(180, target+offset)), slow)
+        # if doOffset:
+        #     offset = math.copysign(20, (target-self.angle))
+        #     self.set_angle(max(0, min(180, target+offset)), slow)
             #time.sleep(0.4)
 
-        self.set_angle(target, slow)
+        self.set_angle(target, doOffset, slow)
         #time.sleep(0.4)
 
-    def set_angle(self, angle, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
+    def set_angle(self, angle, doOffset=True, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # Sets the Twister servo angle, and records it in self.angle. Also has a slow turn option (slow=True).
         #print(f"{angle} degrees, slow={slow}")
         if self.face == "F":
             angle = min(angle + 5, 180)
 
+        offset = 0
+        offsetAngle = angle
+        if doOffset:
+            offset = math.copysign(20, (target - self.angle))
+            offsetAngle = (max(0, min(180, target + offset)), slow)
+
         if slow:
-            DEGREES_PER_SEC = 120.0  # For the slow=True option
-            STEPS_PER_SEC = 100.0
+            self.stepSlowly(offsetAngle)
+            self.stepSlowly(angle)
+        else:
+            self.twister.angle = offsetAngle
+            self.angle = offsetAngle
+            # Don't return to target angle because relying on instant angle setting for turn_cube clockwise_90()
+            # task.wait(0.5)
+            # self.twister.angle = angle
+            # self.angle = angle
+            # task.wait(0.5)
 
-            start_angle = self.angle
-            end_angle = angle
-            cur_angle = start_angle
+    def stepSlowly(self, end_angle):
+        # HELPER METHOD for set_angle()
+        DEGREES_PER_SEC = 120.0  # For the slow=True option
+        STEPS_PER_SEC = 100.0
 
-            step_dir = math.copysign(1.0, end_angle - start_angle)
-            step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
+        start_angle = self.angle
+        #end_angle = offsetAngle
+        cur_angle = start_angle
 
-            while abs(cur_angle - end_angle) > abs(step*3.0):
+        step_dir = math.copysign(1.0, end_angle - start_angle)
+        step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
 
-                cur_angle = max(min(cur_angle + step, 180), 0)
-                self.twister.angle = cur_angle
-                self.angle = cur_angle
-                time.sleep(1.0/STEPS_PER_SEC)
-
-        self.twister.angle = angle
-        self.angle = angle
+        while abs(cur_angle - end_angle) > abs(step * 3.0):
+            cur_angle = max(min(cur_angle + step, 180), 0)
+            self.twister.angle = cur_angle
+            self.angle = cur_angle
+            time.sleep(1.0 / STEPS_PER_SEC)
 
     def horizontal(self, doOffset=False, slow=False):
         position = Claw.horizontal_positions[self.face]
@@ -113,8 +128,8 @@ class Claw:
         position = Claw.vertical_positions[self.face]
         self.twist(position, doOffset, slow)
 
-    def clockwise_90(self, slow=True):
-        self.set_angle(min(180, self.angle + 90), slow)
+    def clockwise_90(self, doOffset=True, slow=True):
+        self.set_angle(min(180, self.angle + 90), doOffset, slow)
 
-    def anti_clockwise_90(self, slow=True):
-        self.set_angle(min(180, self.angle - 90), slow)
+    def anti_clockwise_90(self, doOffset=True, slow=True):
+        self.set_angle(min(180, self.angle - 90), doOffset, slow)
