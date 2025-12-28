@@ -65,7 +65,7 @@ class ClawMachine:
         # Turn Cube
             # Simply twist the extended holder claws in the right direction once
 
-        self.default_position()
+        self.center_cube()
 
         if face_move == "D" or face_move == "U":
 
@@ -138,11 +138,11 @@ class ClawMachine:
         self.claws["D"].extend()
         self.claws["L"].retract()
         self.claws["R"].retract()
-        time.sleep(0.7)
-        self.claws["F"].retract()
-        time.sleep(0.7)
-        self.claws["B"].retract()
         time.sleep(0.5)
+        self.claws["F"].retract()
+        time.sleep(0.5)
+        self.claws["B"].retract()
+        time.sleep(0.4)
 
     def default_claws(self):
         self.claws["D"].twist(2, doOffset=False, slow=False)
@@ -195,11 +195,11 @@ class ClawMachine:
         time.sleep(1)
 
         # If face != "D", the next step is to hold the cube tightly:
-        self.claws[face].extend(push=True)
-        self.claws[opposite_face].extend(push=True)
-        time.sleep(0.7)
         self.claws[adjacent_face1].extend(push=True)
         self.claws[adjacent_face2].extend(push=True)
+        time.sleep(0.7)
+        self.claws[face].extend(push=True)
+        self.claws[opposite_face].extend(push=True)
         time.sleep(1)
 
         # Then retract D:
@@ -252,10 +252,10 @@ class ClawMachine:
         self.default_claws()
         self.claws["L"].extend(push=True)
         self.claws["R"].extend(push=True)
-        time.sleep(0.7)
+        time.sleep(0.6)
         self.claws["F"].extend(push=True)
         self.claws["B"].extend(push=True)
-        time.sleep(0.8)
+        time.sleep(0.6)
         self.default_position()
 
     time.sleep(3)
