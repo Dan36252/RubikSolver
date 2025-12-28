@@ -12,7 +12,7 @@ class Claw:
             "F": 50,
             "R": 30,
             "B": 30,
-            "D": 20
+            "D": 18
         }
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
