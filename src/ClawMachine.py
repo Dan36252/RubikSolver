@@ -222,13 +222,14 @@ class ClawMachine:
         time.sleep(0.5)
 
         # Finally, reset to default position
-        self.claws["D"].extend()
+        self.claws["D"].extend(push=False)
         time.sleep(1)
 
         self.claws[opposite_face].retract()
         self.claws[face].retract()
         time.sleep(0.7)
         self.claws[adjacent_face1].retract()
+        self.claws["D"].extend(push=True)
         time.sleep(0.7)
         self.claws[adjacent_face2].retract()
 

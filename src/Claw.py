@@ -6,13 +6,14 @@ class Claw:
     def __init__(self, extendorChannel, twisterChannel, face):
         pca = PCABoard().get()
 
-        # Angles corresponding to the extended state of each claw
+        # Angles corresponding to the extended state of each claw.
+        # These angles are when the claws fully push on the cube.
         self.extended_angles = {
-            "L": 55,
-            "F": 50,
-            "R": 30,
-            "B": 30,
-            "D": 18
+            "L": 70,
+            "F": 65,
+            "R": 45,
+            "B": 45,
+            "D": 13
         }
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
@@ -53,13 +54,13 @@ class Claw:
 
     def extend(self, push=True):
         offset = 0
-        if push:
+        if push == False:
             if self.face == "D":
-                offset = -5
+                offset = 5
             else:
-                offset = 15
+                offset = -20
         angle = self.extended_angles[self.face]
-        self.extendor.angle = angle - offset
+        self.extendor.angle = angle + offset
 
     def twist(self, position, doOffset=True, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # position = 1, 2, or 3:  fully anticlockwise, halfway, or fully clockwise.
