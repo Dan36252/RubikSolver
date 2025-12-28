@@ -44,6 +44,7 @@ class ClawMachine:
         # Simple hold, only using L and R claws
         self.claws["L"].horizontal()
         self.claws["R"].vertical()
+        time.sleep(0.5)
         self.claws["L"].extend(push=push)
         self.claws["R"].extend(push=push)
 
@@ -216,6 +217,7 @@ class ClawMachine:
             self.claws[face].retract()
             time.sleep(0.5)
             self.claws[face].twist(1, slow=False)
+            time.sleep(0.4)
             self.claws[face].extend(push=False)
             time.sleep(1)
             self.claws[face].twist(2, slow=True)
