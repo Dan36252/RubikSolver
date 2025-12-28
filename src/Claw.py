@@ -68,11 +68,12 @@ class Claw:
         target = 90 * (position - 1)
 
         if doOffset:
-            offset = math.copysign(1, (90-self.angle)) * 15
+            offset = math.copysign(15, (90-self.angle))
             self.set_angle(max(0, min(180, target+offset)))
             time.sleep(0.8)
 
         self.set_angle(target)
+        time.sleep(0.4)
 
     def set_angle(self, angle, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # Sets the Twister servo angle, and records it in self.angle. Also has a slow turn option (slow=True).
@@ -80,12 +81,16 @@ class Claw:
         if slow:
             DEGREES_PER_SEC = 45  # For the slow=True option
             STEPS_PER_SEC = 100
-            step = DEGREES_PER_SEC / STEPS_PER_SEC
 
             start_angle = self.angle
             end_angle = angle
             cur_angle = start_angle
+
+            step_dir = math.copysign(1, 90 - start_angle)
+            step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
+
             while cur_angle < end_angle:
+
                 cur_angle = max(min(cur_angle + step, 180), 0)
                 self.twister.angle = cur_angle
                 self.angle = cur_angle

@@ -71,6 +71,8 @@ class ClawMachine:
         # Turn Cube
             # Simply twist the extended holder claws in the right direction once
 
+        self.default_position()
+
         if face_move == "D" or face_move == "U":
 
             self.hold_cube(push=False)
@@ -137,6 +139,13 @@ class ClawMachine:
 
         time.sleep(1)
 
+    def default_position(self):
+        self.claws["D"].extend()
+        self.claws["L"].retract()
+        self.claws["F"].retract()
+        self.claws["R"].retract()
+        self.claws["B"].retract()
+
     def turn_face(self, face, move_type):
         # face = F, R, B, U, etc. (string)
         # move_type = "", "'", or "2" (string)
@@ -154,7 +163,8 @@ class ClawMachine:
             self.turn_cube("R")
             return
 
-        # First, set all claw angles
+        # First, default position and set all claw angles
+        self.default_position()
         opposite_face = self.opposite_faces[face]
         adjacent_face1 = self.adjacent_faces[face]
         adjacent_face2 = self.opposite_faces[adjacent_face1]
@@ -165,8 +175,10 @@ class ClawMachine:
         self.claws[adjacent_face1].vertical()
         self.claws[adjacent_face2].vertical()
 
-        if move_type == "2":
+        if move_type == "":
             self.claws[face].twist(1, False)
+        elif move_type == "'":
+            self.claws[face].twist(3, False)
         else:
             self.claws[face].twist(2, False)
 
