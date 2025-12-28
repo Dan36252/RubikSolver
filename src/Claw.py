@@ -9,10 +9,10 @@ class Claw:
         # Angles corresponding to the extended state of each claw.
         # These angles are when the claws fully push on the cube.
         self.extended_angles = {
-            "L": 70,
-            "F": 65,
-            "R": 45,
-            "B": 45,
+            "L": 65,
+            "F": 60,
+            "R": 40,
+            "B": 40,
             "D": 13
         }
 
@@ -60,7 +60,7 @@ class Claw:
             else:
                 offset = -20
         angle = self.extended_angles[self.face]
-        self.extendor.angle = angle + offset
+        self.extendor.angle = angle - offset
 
     def twist(self, position, doOffset=True, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
         # position = 1, 2, or 3:  fully anticlockwise, halfway, or fully clockwise.
