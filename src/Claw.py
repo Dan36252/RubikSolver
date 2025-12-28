@@ -12,7 +12,7 @@ class Claw:
             "F": 50,
             "R": 30,
             "B": 30,
-            "D": 14
+            "D": 20
         }
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
@@ -53,7 +53,11 @@ class Claw:
 
     def extend(self, push=True):
         offset = 0
-        if push and self.face != "D": offset = 15
+        if push:
+            if self.face == "D":
+                offset = -5
+            else:
+                offset = 15
         angle = self.extended_angles[self.face]
         self.extendor.angle = angle - offset
 
