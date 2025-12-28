@@ -197,6 +197,7 @@ class ClawMachine:
         # If face != "D", the next step is to hold the cube tightly:
         self.claws[face].extend(push=True)
         self.claws[opposite_face].extend(push=True)
+        time.sleep(0.7)
         self.claws[adjacent_face1].extend(push=True)
         self.claws[adjacent_face2].extend(push=True)
         time.sleep(1)
@@ -250,8 +251,9 @@ class ClawMachine:
         self.default_position()
         self.default_claws()
         self.claws["L"].extend(push=True)
-        self.claws["F"].extend(push=True)
         self.claws["R"].extend(push=True)
+        time.sleep(0.7)
+        self.claws["F"].extend(push=True)
         self.claws["B"].extend(push=True)
         time.sleep(0.8)
         self.default_position()
