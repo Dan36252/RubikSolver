@@ -3,22 +3,41 @@ from adafruit_motor import servo
 from PCABoard import PCABoard
 
 class Claw:
+    # Angles corresponding to the extended state of each claw.
+    # These angles are when the claws fully push on the cube.
+    extended_angles = {
+        "L": 40,
+        "F": 35,
+        "R": 15,
+        "B": 15,
+        "D": 13
+    }
+
+    # NOTE: horizontal and vertical positions must be such that a 90-degree
+    # turn clockwise is always possible after that position.
+    horizontal_positions = {
+        "L": 1,
+        "F": 2,
+        "R": 1,
+        "B": 2,
+        "D": 2
+    }
+
+    # (See note for horizontal_positions)
+    vertical_positions = {
+        "L": 2,
+        "F": 1,
+        "R": 2,
+        "B": 1,
+        "D": 1
+    }
+
     def __init__(self, extendorChannel, twisterChannel, face):
         pca = PCABoard().get()
 
-        # Angles corresponding to the extended state of each claw.
-        # These angles are when the claws fully push on the cube.
-        self.extended_angles = {
-            "L": 40,
-            "F": 35,
-            "R": 15,
-            "B": 15,
-            "D": 13
-        }
-
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
         if face == "D":
-            self.extendor.angle = self.extended_angles["D"]
+            self.extendor.angle = Claw.extended_angles["D"]
         else:
             self.extendor.angle = 160
 
@@ -27,25 +46,6 @@ class Claw:
         self.twister.angle = self.angle
 
         self.face = face
-
-        # NOTE: horizontal and vertical positions must be such that a 90-degree
-        # turn clockwise is always possible after that position.
-        self.horizontal_positions = {
-            "L" : 1,
-            "F": 2,
-            "R": 1,
-            "B": 2,
-            "D": 2
-        }
-
-        # (See note for horizontal_positions)
-        self.vertical_positions = {
-            "L" : 2,
-            "F": 1,
-            "R": 2,
-            "B": 1,
-            "D": 1
-        }
 
         time.sleep(0.5)
 
@@ -59,7 +59,7 @@ class Claw:
                 offset = -15
             else:
                 offset = -20
-        angle = self.extended_angles[self.face]
+        angle = Claw.extended_angles[self.face]
         self.extendor.angle = angle - offset
 
     def twist(self, position, doOffset=True, slow=True): # ADJUST: Default should be slow=False; keep it =True for now (testing)
@@ -103,11 +103,11 @@ class Claw:
         self.angle = angle
 
     def horizontal(self, doOffset=False, slow=False):
-        position = self.horizontal_positions[self.face]
+        position = Claw.horizontal_positions[self.face]
         self.twist(position, doOffset, slow)
 
     def vertical(self, doOffset=False, slow=False):
-        position = self.vertical_positions[self.face]
+        position = Claw.vertical_positions[self.face]
         self.twist(position, doOffset, slow)
 
     def clockwise_90(self, slow=True):

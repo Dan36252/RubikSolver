@@ -117,8 +117,11 @@ class ClawMachine:
             time.sleep(2)
 
             # Release
-            self.claws[face_move].extend(push=False)
-            self.claws[opposite_face].extend(push=False)
+            if Claw.horizontal_positions[face_move] == 1:
+                self.claws[opposite_face].extend(push=False)
+            else:
+                self.claws[face_move].extend(push=False)
+
             time.sleep(0.5)
             self.claws["D"].extend()
 
@@ -209,7 +212,7 @@ class ClawMachine:
         elif move_type == "'":
             self.claws[face].twist(2)
         elif move_type == "2":
-            self.claws[face].twist(3)
+            self.claws[face].twist(3, slow=False)
         else:
             print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
         time.sleep(1)
