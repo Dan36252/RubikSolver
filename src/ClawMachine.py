@@ -12,16 +12,8 @@ class ClawMachine:
             "B" : Claw(11, 15, "B"),
         }
 
-        self.claws["D"].extend()
-        self.claws["R"].horizontal()
-        self.claws["L"].horizontal()
-        self.claws["R"].extend()
-        self.claws["L"].extend()
-
-        time.sleep(1.3)
-
-        self.claws["R"].retract()
-        self.claws["L"].retract()
+        # center_cube() includes default_position()
+        self.center_cube()
 
         self.adjacent_faces = {
             "L" : "F",
@@ -145,6 +137,16 @@ class ClawMachine:
         self.claws["F"].retract()
         self.claws["R"].retract()
         self.claws["B"].retract()
+        time.sleep(0.5)
+        self.default_claws()
+
+    def default_claws(self):
+        self.claws["D"].twist(2, doOffset=False, slow=False)
+        self.claws["L"].twist(2, doOffset=False, slow=False)
+        self.claws["F"].twist(2, doOffset=False, slow=False)
+        self.claws["R"].twist(2, doOffset=False, slow=False)
+        self.claws["B"].twist(2, doOffset=False, slow=False)
+        time.sleep(0.4)
 
     def turn_face(self, face, move_type):
         # face = F, R, B, U, etc. (string)
@@ -165,11 +167,12 @@ class ClawMachine:
 
         # First, default position and set all claw angles
         self.default_position()
-        opposite_face = self.opposite_faces[face]
+        opposite_face = None
+        if face != "D": opposite_face = self.opposite_faces[face]
         adjacent_face1 = self.adjacent_faces[face]
         adjacent_face2 = self.opposite_faces[adjacent_face1]
 
-        if opposite_face in self.claws:
+        if not (opposite_face is None) and (opposite_face in self.claws):
             self.claws[opposite_face].horizontal()
 
         if face == "D":
@@ -256,5 +259,14 @@ class ClawMachine:
             self.claws[adjacent_face2].retract()
             self.claws[face].retract()
             time.sleep(1)
+
+    def center_cube(self):
+        self.default_position()
+        self.claws["L"].extend(push=True)
+        self.claws["F"].extend(push=True)
+        self.claws["R"].extend(push=True)
+        self.claws["B"].extend(push=True)
+        time.sleep(0.8)
+        self.default_position()
 
     time.sleep(3)
