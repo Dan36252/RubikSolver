@@ -89,7 +89,7 @@ class Claw:
                 cur_angle = max(min(cur_angle + step, 180), 0)
                 self.twister.angle = cur_angle
                 self.angle = cur_angle
-                time.sleep(1/STEPS_PER_SEC)
+                time.sleep(1.0/STEPS_PER_SEC)
 
         self.twister.angle = angle
         self.angle = angle

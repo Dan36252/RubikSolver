@@ -172,15 +172,21 @@ class ClawMachine:
         if opposite_face in self.claws:
             self.claws[opposite_face].horizontal()
 
-        self.claws[adjacent_face1].vertical()
-        self.claws[adjacent_face2].vertical()
+        if face == "D":
+            self.claws[adjacent_face1].horizontal()
+            self.claws[adjacent_face2].horizontal()
+        else:
+            self.claws[adjacent_face1].vertical()
+            self.claws[adjacent_face2].vertical()
 
         if move_type == "":
             self.claws[face].twist(1, False)
         elif move_type == "'":
             self.claws[face].twist(3, False)
+        elif move_type == "2":
+            self.claws[face].twist(1, False)
         else:
-            self.claws[face].twist(2, False)
+            print(f"WARNING: Unexpected move_type in turn_face()! ({move_type})")
 
         time.sleep(2)
         # TODO: we changed the face_turn to start the claw from POS 1 for clockwise and POS 3 for anticlockwise.
@@ -193,13 +199,18 @@ class ClawMachine:
             time.sleep(1)
 
             # Then, turn D:
-            if move_type == "2" or move_type == "":
-                self.claws[face].twist(3)
+            if move_type == "":
+                self.claws[face].twist(2)
             elif move_type == "'":
-                self.claws[face].twist(1)
+                self.claws[face].twist(2)
+            elif move_type == "2":
+                self.claws[face].twist(3)
             else:
                 print(f"WARNING: Unexpected move_type in turn_face()! ({move_type})")
             time.sleep(2)
+
+            # Finally, reset to default position:
+            self.default_position()
         else:
             # If face != "D", the next step is to hold the cube lightly:
             self.claws[face].extend(push=False)
@@ -220,20 +231,17 @@ class ClawMachine:
             time.sleep(2)
 
             # And rotate the face.
-            if move_type == "2" or move_type == "":
-                self.claws[face].twist(3)
+            if move_type == "":
+                self.claws[face].twist(2)
             elif move_type == "'":
-                self.claws[face].twist(1)
+                self.claws[face].twist(2)
+            elif move_type == "2":
+                self.claws[face].twist(3)
             else:
                 print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
             time.sleep(2)
 
-        # Finally, reset to default position
-        if face == "D":
-            self.claws[adjacent_face1].retract()
-            self.claws[adjacent_face2].retract()
-            time.sleep(1)
-        else:
+            # Finally, reset to default position
             self.claws[opposite_face].extend(push=False)
             self.claws[adjacent_face1].extend(push=False)
             self.claws[adjacent_face2].extend(push=False)
