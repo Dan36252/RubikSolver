@@ -215,7 +215,7 @@ class ClawMachine:
             self.claws[face].twist(2, slow=True)
             self.claws[face].retract()
             time.sleep(0.5)
-            self.claws[face].twist(3, slow=False)
+            self.claws[face].twist(1, slow=False)
             self.claws[face].extend(push=False)
             time.sleep(1)
             self.claws[face].twist(2, slow=True)
