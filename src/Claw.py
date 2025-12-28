@@ -9,10 +9,10 @@ class Claw:
         # Angles corresponding to the extended state of each claw.
         # These angles are when the claws fully push on the cube.
         self.extended_angles = {
-            "L": 65,
-            "F": 60,
-            "R": 40,
-            "B": 40,
+            "L": 70,
+            "F": 65,
+            "R": 45,
+            "B": 45,
             "D": 13
         }
 
@@ -58,7 +58,7 @@ class Claw:
             if self.face == "D":
                 offset = 5
             else:
-                offset = -15
+                offset = -20
         angle = self.extended_angles[self.face]
         self.extendor.angle = angle - offset
 
