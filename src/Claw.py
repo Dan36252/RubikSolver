@@ -9,10 +9,10 @@ class Claw:
         # Angles corresponding to the extended state of each claw.
         # These angles are when the claws fully push on the cube.
         self.extended_angles = {
-            "L": 65,
-            "F": 60,
-            "R": 40,
-            "B": 40,
+            "L": 55,
+            "F": 50,
+            "R": 30,
+            "B": 30,
             "D": 13
         }
 
