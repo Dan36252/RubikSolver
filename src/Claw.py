@@ -41,10 +41,10 @@ class Claw:
         # ADJUST
         # Angles corresponding to the extended state of each claw
         self.extended_angles = {
-            "L" : 50,
+            "L" : 55,
             "F": 50,
-            "R": 50,
-            "B": 50,
+            "R": 30,
+            "B": 30,
             "D": 19
         }
 
