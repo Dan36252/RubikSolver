@@ -118,19 +118,19 @@ class ClawMachine:
             time.sleep(2)
 
             # Release
-            if Claw.horizontal_positions[face_move] == 1:
-                self.claws[opposite_face].extend(push=False)
-            else:
-                self.claws[face_move].extend(push=False)
+            vertical_claw = opposite_face if Claw.horizontal_positions[face_move] == 1 else face_move
+            self.claws[vertical_claw].extend(push=False)
 
             time.sleep(0.5)
-            self.claws["D"].extend()
+            self.claws["D"].extend(push=False)
 
             # Reset to default position
             time.sleep(0.8)
-            self.claws[face_move].retract()
+            self.claws[vertical_claw].retract()
+            time.sleep(0.3)
+            self.claws["D"].extend()
             time.sleep(0.7)
-            self.claws[opposite_face].retract()
+            self.claws[self.opposite_faces[vertical_claw]].retract()
 
         time.sleep(1)
 
