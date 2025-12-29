@@ -296,7 +296,7 @@ class ClawMachine:
             self.claws["R"].vertical()
             self.claws["B"].vertical()
 
-            self.claws["D"].set_angle(self.claws["D".angle]+45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle+45, offset=0, slow=True)
         elif face_num < 4:
             self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
             self.hold_cube(push=True)
