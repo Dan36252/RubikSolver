@@ -3,9 +3,11 @@ import time
 
 robot = ClawMachine()
 
-robot.move("F2")
+for i in range(6):
+    print("face to "+str(i))
+    robot.face_to_cam(i)
 
-formula = ["L2", "B", "R2", "L'", "D'", "U'", "R'"]
-
-for m in formula:
-    robot.move(m)
+# formula = ["L2", "B", "R2", "L'", "D'", "U'", "R'"]
+#
+# for m in formula:
+#     robot.move(m)

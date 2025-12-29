@@ -2,6 +2,22 @@ from Claw import Claw
 import time
 
 class ClawMachine:
+    
+    CLawMachine.adjacent_faces = {
+        "L": "F",
+        "F": "R",
+        "R": "B",
+        "B": "L",
+        "D": "F"
+    }
+
+    ClawMachine.opposite_faces = {
+        "L": "R",
+        "F": "B",
+        "R": "L",
+        "B": "F"
+    }
+    
     def __init__(self):
         # ADJUST
         self.claws = {
@@ -14,21 +30,6 @@ class ClawMachine:
 
         # center_cube() includes default_position()
         self.center_cube()
-
-        self.adjacent_faces = {
-            "L" : "F",
-            "F" : "R",
-            "R" : "B",
-            "B" : "L",
-            "D" : "F"
-        }
-
-        self.opposite_faces = {
-            "L": "R",
-            "F": "B",
-            "R": "L",
-            "B": "F"
-        }
 
     def move(self, move):
         # move =  F, R', U2, etc.
@@ -47,12 +48,14 @@ class ClawMachine:
         time.sleep(0.5)
         self.claws["L"].extend(push=push)
         self.claws["R"].extend(push=push)
+        time.sleep(0.7)
 
     def release_cube(self):
         # Simply release the hold_cube (only L and R claws)
         self.claws["L"].retract()
         time.sleep(0.7)
         self.claws["R"].retract()
+        time.sleep(0.7)
 
     def turn_cube(self, face_move):
         # face_move = F, R, L, etc.
@@ -92,9 +95,9 @@ class ClawMachine:
                 # (face_move and opposite_face claws should be opposite (vertical and horizontal)).
             # Then, rotate cube 90 degrees clockwise.
 
-            opposite_face = self.opposite_faces[face_move]
-            adjacent_face1 = self.adjacent_faces[face_move]
-            adjacent_face2 = self.opposite_faces[adjacent_face1]
+            opposite_face = ClawMachine.opposite_faces[face_move]
+            adjacent_face1 = ClawMachine.adjacent_faces[face_move]
+            adjacent_face2 = ClawMachine.opposite_faces[adjacent_face1]
 
             self.claws[adjacent_face1].vertical()
             self.claws[adjacent_face2].vertical()
@@ -140,7 +143,7 @@ class ClawMachine:
             time.sleep(0.3)
             self.claws["D"].extend()
             time.sleep(0.7)
-            self.claws[self.opposite_faces[vertical_claw]].retract()
+            self.claws[ClawMachine.opposite_faces[vertical_claw]].retract()
 
         time.sleep(1)
 
@@ -186,9 +189,9 @@ class ClawMachine:
 
         # First, default position and set all claw angles
         self.default_position()
-        opposite_face = self.opposite_faces[face]
-        adjacent_face1 = self.adjacent_faces[face]
-        adjacent_face2 = self.opposite_faces[adjacent_face1]
+        opposite_face = ClawMachine.opposite_faces[face]
+        adjacent_face1 = ClawMachine.adjacent_faces[face]
+        adjacent_face2 = ClawMachine.opposite_faces[adjacent_face1]
 
         self.claws[adjacent_face1].vertical()
         self.claws[adjacent_face2].vertical()
@@ -262,12 +265,66 @@ class ClawMachine:
     def center_cube(self):
         self.default_position()
         self.default_claws()
+        time.sleep(0.3)
+
         self.claws["L"].extend(push=True)
         self.claws["R"].extend(push=True)
         time.sleep(0.6)
         self.claws["F"].extend(push=True)
         self.claws["B"].extend(push=True)
         time.sleep(0.6)
+
+        self.claws["D"].retract()
+        time.sleep(0.3)
+        self.claws["D"].twist(2, doOffset=False, slow=False)
+        time.sleep(0.3)
+        self.claws["D"].extend()
+        time.sleep(0.7)
+
         self.default_position()
+        
+    def face_to_cam(self, face_num):
+        # face_num = 0, 1, 2, 3, 4, or 5.
+        # shows a face in the correct orientation.
+        # ASSUMING SPECIFIC INITIAL CUBE ORIENTATION:
+        # U = Yellow, F = Green, L = Red
+        # ALSO, ASSUMING that this will be called with face_num = 0, 1, 2, etc. one after the other.
+        if face_num == 0:
+            self.center_cube()
+            self.claws["L"].vertical()
+            self.claws["F"].vertical()
+            self.claws["R"].vertical()
+            self.claws["B"].vertical()
+
+            self.claws["D"].set_angle(self.claws["D".angle]+45, offset=0, slow=True)
+        elif face_num < 4:
+            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.hold_cube(push=True)
+            self.claws["D"].retract()
+            time.sleep(0.3)
+            self.claws["D"].twist(2, doOffset=False, slow=False)
+            time.sleep(0.3)
+            self.claws["D"].extend()
+            time.sleep(0.7)
+            self.release_cube()
+            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+        elif face_num == 4:
+            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.turn_cube("L")
+            self.turn_cube("U")
+            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+        elif face_num == 5:
+            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.turn_cube("R")
+            self.turn_cube("R")
+            self.claws["D"].set_angle(self.claws["D".angle] - 45, offset=0, slow=True)
+
+
+
+    def next_D_45(self):
+        print("temp")
+
+
+        
 
     time.sleep(3)
