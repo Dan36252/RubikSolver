@@ -3,7 +3,7 @@ import time
 
 class ClawMachine:
     
-    CLawMachine.adjacent_faces = {
+    ClawMachine.adjacent_faces = {
         "L": "F",
         "F": "R",
         "R": "B",
