@@ -298,7 +298,7 @@ class ClawMachine:
 
             self.claws["D"].set_angle(self.claws["D"].angle+45, offset=0, slow=True)
         elif face_num < 4:
-            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
             self.hold_cube(push=True)
             self.claws["D"].retract()
             time.sleep(0.3)
@@ -307,17 +307,17 @@ class ClawMachine:
             self.claws["D"].extend()
             time.sleep(0.7)
             self.release_cube()
-            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
         elif face_num == 4:
-            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
             self.turn_cube("L")
             self.turn_cube("U")
-            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
         elif face_num == 5:
-            self.claws["D"].set_angle(self.claws["D".angle] + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
             self.turn_cube("R")
             self.turn_cube("R")
-            self.claws["D"].set_angle(self.claws["D".angle] - 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
 
 
 
