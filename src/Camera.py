@@ -5,8 +5,9 @@
 # NVIDIA Jetson Nano Developer Kit using OpenCV
 # Drivers for the camera and OpenCV are included in the base image
 
-import cv2
+import cv2, time
 from PIL import Image
+import numpy as np
 
 """ 
 gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
@@ -51,14 +52,14 @@ def read_camera():
     video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if video_capture.isOpened():
         try:
-            window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
+            #window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
             while True:
                 ret_val, frame = video_capture.read()
                 # Check to see if the user closed the window
                 # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
                 # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
-                if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
-                    cv2.imshow(window_title, frame)
+                # if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
+                #     cv2.imshow(window_title, frame)
 
                 if not (frame is None):
                     return frame
@@ -91,5 +92,8 @@ def get_cropped_img():
     right = 200
     lower = 150
     raw_img = get_raw_img()
-    cropped_img = raw_img.crop((left, upper, right, lower))
+    tmp_display_img = Image.fromarray(raw_img)
+    tmp_display_img.show()
+    time.sleep(10)
+    #cropped_img = raw_img.crop((left, upper, right, lower))
     return cropped_img
