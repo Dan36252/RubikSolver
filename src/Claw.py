@@ -114,7 +114,7 @@ class Claw:
         step_dir = math.copysign(1.0, end_angle - start_angle)
         step = (DEGREES_PER_SEC / STEPS_PER_SEC) * step_dir
 
-        while abs(cur_angle - end_angle) > abs(step * 3.0):
+        while abs(cur_angle - end_angle) > abs(step * 2.0):
             cur_angle = max(min(cur_angle + step, 180), 0)
             self.twister.angle = cur_angle
             self.angle = cur_angle

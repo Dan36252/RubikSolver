@@ -290,38 +290,31 @@ class ClawMachine:
         # U = Yellow, F = Green, L = Red
         # ALSO, ASSUMING that this will be called with face_num = 0, 1, 2, etc. one after the other.
         if face_num == 0:
-            self.center_cube(d_pos=1)
+            self.center_cube(d_pos=3)
             self.claws["L"].vertical()
             self.claws["F"].vertical()
             self.claws["R"].vertical()
             self.claws["B"].vertical()
-            print("-----------------")
-            print(self.claws["D"].angle)
-            print(self.claws["D"].angle+45)
-            self.claws["D"].set_angle(self.claws["D"].angle+45, offset=0, slow=True)
+
+            self.claws["D"].set_angle(self.claws["D"].angle-45, offset=0, slow=True)
         elif face_num < 4:
-            print("-----------------")
-            print(self.claws["D"].angle)
-            print(self.claws["D"].angle + 45)
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
-            self.center_cube(d_pos=1)
-            print("-----------------")
-            print(self.claws["D"].angle)
-            print(self.claws["D"].angle + 45)
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
+            self.center_cube(d_pos=3)
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
         elif face_num == 4:
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
             self.turn_cube("L")
             self.turn_cube("U")
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
-        elif face_num == 5:
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
-            self.turn_cube("R")
-            self.turn_cube("R")
+            self.center_cube(d_pos=3)
             self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
+        elif face_num == 5:
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
+            self.turn_cube("R")
+            self.turn_cube("R")
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
         elif face_num == 6:
             # RESET CUBE POSITION
-            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
+            self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
             self.turn_cube("R")
 
 
