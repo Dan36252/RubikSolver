@@ -3,7 +3,7 @@ import time
 
 robot = ClawMachine()
 
-for i in range(6):
+for i in range(7):
     print("face to "+str(i))
     robot.face_to_cam(i)
 

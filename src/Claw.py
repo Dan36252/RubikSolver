@@ -34,6 +34,7 @@ class Claw:
 
     def __init__(self, extendorChannel, twisterChannel, face):
         pca = PCABoard().get()
+        #print("Init Claw "+face)
 
         self.extendor = servo.Servo(pca.channels[extendorChannel], min_pulse=500, max_pulse=2400)
         if face == "D":

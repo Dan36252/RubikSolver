@@ -158,7 +158,7 @@ class ClawMachine:
         time.sleep(0.4)
 
     def default_claws(self):
-        self.claws["D"].twist(2, doOffset=False, slow=False)
+        #self.claws["D"].twist(2, doOffset=False, slow=False)
         self.claws["L"].twist(2, doOffset=False, slow=False)
         self.claws["F"].twist(2, doOffset=False, slow=False)
         self.claws["R"].twist(2, doOffset=False, slow=False)
@@ -284,7 +284,7 @@ class ClawMachine:
         self.default_position()
         
     def face_to_cam(self, face_num):
-        # face_num = 0, 1, 2, 3, 4, or 5.
+        # face_num = 0, 1, 2, 3, 4, or 5.  face_num = 6 --> finish & reset cube position
         # shows a face in the correct orientation.
         # ASSUMING SPECIFIC INITIAL CUBE ORIENTATION:
         # U = Yellow, F = Green, L = Red
@@ -318,6 +318,11 @@ class ClawMachine:
             self.turn_cube("R")
             self.turn_cube("R")
             self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
+        elif face_num == 6:
+            # RESET CUBE POSITION
+            self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
+            self.turn_cube("R")
+
 
 
 
