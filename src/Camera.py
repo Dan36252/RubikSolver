@@ -47,7 +47,7 @@ def read_camera():
     window_title = "CSI Camera"
 
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
-    print(gstreamer_pipeline(flip_method=0))
+    print(gstreamer_pipeline(flip_method=0, sensor_id=1))
     video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if video_capture.isOpened():
         try:
@@ -74,8 +74,8 @@ def read_camera():
         print("Error: Unable to open camera")
 
 
-if __name__ == "__main__":
-    show_camera()
+# if __name__ == "__main__":
+#     show_camera()
 
 def get_raw_img():
     f = read_camera()
