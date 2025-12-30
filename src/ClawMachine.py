@@ -299,14 +299,7 @@ class ClawMachine:
             self.claws["D"].set_angle(self.claws["D"].angle+45, offset=0, slow=True)
         elif face_num < 4:
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
-            self.hold_cube(push=True)
-            self.claws["D"].retract()
-            time.sleep(0.3)
-            self.claws["D"].twist(1, doOffset=False, slow=False)
-            time.sleep(0.3)
-            self.claws["D"].extend()
-            time.sleep(0.7)
-            self.release_cube()
+            self.center_cube(d_pos=1)
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
         elif face_num == 4:
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
