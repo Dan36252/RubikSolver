@@ -316,6 +316,9 @@ class ClawMachine:
             # RESET CUBE POSITION
             self.claws["D"].set_angle(self.claws["D"].angle - 45, offset=0, slow=True)
             self.turn_cube("R")
+            self.turn_cube("D")
+            self.turn_cube("D")
+            self.center_cube()
 
 
 

@@ -37,3 +37,4 @@ class CubeReader:
     def read_sticker(self, sticker):
         # sticker is a 2D array of color values (encoded into one number hopefully)
         print("temp read_sticker()")
+        return 0
