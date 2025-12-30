@@ -262,7 +262,7 @@ class ClawMachine:
 
         time.sleep(1)
 
-    def center_cube(self):
+    def center_cube(self, d_pos=2):
         self.default_position()
         self.default_claws()
         time.sleep(0.3)
@@ -276,7 +276,7 @@ class ClawMachine:
 
         self.claws["D"].retract()
         time.sleep(0.3)
-        self.claws["D"].twist(2, doOffset=False, slow=False)
+        self.claws["D"].twist(d_pos, doOffset=False, slow=False)
         time.sleep(0.3)
         self.claws["D"].extend()
         time.sleep(0.7)
@@ -290,7 +290,7 @@ class ClawMachine:
         # U = Yellow, F = Green, L = Red
         # ALSO, ASSUMING that this will be called with face_num = 0, 1, 2, etc. one after the other.
         if face_num == 0:
-            self.center_cube()
+            self.center_cube(d_pos=1)
             self.claws["L"].vertical()
             self.claws["F"].vertical()
             self.claws["R"].vertical()
@@ -302,7 +302,7 @@ class ClawMachine:
             self.hold_cube(push=True)
             self.claws["D"].retract()
             time.sleep(0.3)
-            self.claws["D"].twist(2, doOffset=False, slow=False)
+            self.claws["D"].twist(1, doOffset=False, slow=False)
             time.sleep(0.3)
             self.claws["D"].extend()
             time.sleep(0.7)
