@@ -52,21 +52,22 @@ def read_camera():
     if video_capture.isOpened():
         try:
             window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
-            #while True:
-            ret_val, frame = video_capture.read()
-            # Check to see if the user closed the window
-            # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
-            # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
-            if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
-                cv2.imshow(window_title, frame)
+            while True:
+                ret_val, frame = video_capture.read()
+                # Check to see if the user closed the window
+                # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
+                # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
+                if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
+                    cv2.imshow(window_title, frame)
 
-            return frame
-            # else:
-            #     break
-            # keyCode = cv2.waitKey(10) & 0xFF
-            # # Stop the program on the ESC key or 'q'
-            # if keyCode == 27 or keyCode == ord('q'):
-            #     break
+                if not (frame is None):
+                    return frame
+                # else:
+                #     break
+                # keyCode = cv2.waitKey(10) & 0xFF
+                # # Stop the program on the ESC key or 'q'
+                # if keyCode == 27 or keyCode == ord('q'):
+                #     break
         finally:
             video_capture.release()
             cv2.destroyAllWindows()
