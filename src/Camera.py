@@ -80,7 +80,10 @@ def read_camera():
 
 def get_raw_img():
     f = read_camera()
-    print(f)
+    print("GOT IMAGE!!!!!!!!!!!")
+    print("type:")
+    print(type(f))
+    return f
 
 def get_cropped_img():
     left = 100
