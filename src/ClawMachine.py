@@ -295,11 +295,19 @@ class ClawMachine:
             self.claws["F"].vertical()
             self.claws["R"].vertical()
             self.claws["B"].vertical()
-
+            print("-----------------")
+            print(self.claws["D"].angle)
+            print(self.claws["D"].angle+45)
             self.claws["D"].set_angle(self.claws["D"].angle+45, offset=0, slow=True)
         elif face_num < 4:
+            print("-----------------")
+            print(self.claws["D"].angle)
+            print(self.claws["D"].angle + 45)
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
             self.center_cube(d_pos=1)
+            print("-----------------")
+            print(self.claws["D"].angle)
+            print(self.claws["D"].angle + 45)
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
         elif face_num == 4:
             self.claws["D"].set_angle(self.claws["D"].angle + 45, offset=0, slow=True)
