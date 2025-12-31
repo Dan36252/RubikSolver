@@ -55,7 +55,7 @@ def read_camera():
             #window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
             while True:
                 ret_val, frame = video_capture.read()
-                frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_NV12)
+                frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
                 # Check to see if the user closed the window
                 # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
                 # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
