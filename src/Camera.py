@@ -47,7 +47,7 @@ class Camera:
         )
 
     def read_camera(self):
-        cap = cv2.VideoCapture(self.gstreamer_pipeline, cv2.CAP_GSTREAMER)
+        cap = cv2.VideoCapture(self.gstreamer_pipeline(), cv2.CAP_GSTREAMER)
         ret, frame = cap.read()
         cv2.imwrite("rubik_test.jpg", frame)
         print("WROTE IMAGE!!!!!!!!!")
