@@ -8,7 +8,6 @@
 import cv2, time
 from PIL import Image
 import numpy as np
-from picamera2 import Picamera2
 
 """ 
 gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
@@ -18,15 +17,12 @@ Default 1920x1080 displayd in a 1/4 size window
 """
 
 class Camera:
-    def __init__(self):
-        self.picam2 = Picamera2()
-        self.picam2.configure(self.picam2.create_still_configuration())
 
     def gstreamer_pipeline(
         self,
         sensor_id=0,
-        capture_width=1920,
-        capture_height=1080,
+        capture_width=1280,
+        capture_height=720,
         display_width=960,
         display_height=540,
         framerate=30,
@@ -51,9 +47,10 @@ class Camera:
         )
 
     def read_camera(self):
-        self.picam2.start()
-        time.sleep(1.5)
-        frame = self.picam2.capture_array()
+        cap = cv2.VideoCapture(gstreamer_pipeline, cv2.CAP_GSTREAMER)
+        ret, frame = cap.read()
+        cv2.imwrite("rubik_test.jpg", frame)
+        print("WROTE IMAGE!!!!!!!!!")
         return frame
 
     def read_camera_old(self):
