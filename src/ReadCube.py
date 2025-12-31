@@ -1,4 +1,4 @@
-from Camera import get_cropped_img
+from Camera import Camera
 from PIL import Image
 from CubeState import COLOR_SEQUENCE, CubeState
 
@@ -14,10 +14,11 @@ class CubeReader:
     def ReadCube(self):
         # Returns: CubeState
         print("~~~")
+        cam = Camera()
         faces = []
         for i in range(6):
             self.claw_machine.face_to_cam(i)
-            cropped_img = get_cropped_img()
+            cropped_img = cam.get_cropped_img()
             face = self.read_face(cropped_img)
 
     def read_face(self, cropped_img):
