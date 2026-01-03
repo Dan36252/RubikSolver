@@ -40,11 +40,11 @@ class Claw:
         if face == "D":
             self.extendor.angle = Claw.extended_angles["D"]
         else:
-            self.extendor.angle = 160
+            self.extendor.angle = 163
 
         self.twister = servo.Servo(pca.channels[twisterChannel], min_pulse=500, max_pulse=2400)
         self.angle = 90 # The target angle of the Twister only
-        #self.twister.angle = self.angle
+        self.twister.angle = self.angle
 
         self.face = face
 
