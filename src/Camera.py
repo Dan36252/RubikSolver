@@ -48,6 +48,11 @@ class Camera:
 
     def read_camera(self):
         cap = cv2.VideoCapture(self.gstreamer_pipeline(), cv2.CAP_GSTREAMER)
+
+        # Let auto-exposure settle
+        for _ in range(30):
+            cap.read()
+            
         ret, frame = cap.read()
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         cv2.imwrite("rubik_test.jpg", frame)
