@@ -20,7 +20,7 @@ class Camera:
 
     def gstreamer_pipeline(
         self,
-        sensor_id=1,
+        sensor_id=0,
         capture_width=1920,
         capture_height=1080,
         display_width=960,
