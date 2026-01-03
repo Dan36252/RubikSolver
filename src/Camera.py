@@ -49,8 +49,9 @@ class Camera:
     def read_camera(self):
         cap = cv2.VideoCapture(self.gstreamer_pipeline(), cv2.CAP_GSTREAMER)
         ret, frame = cap.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         cv2.imwrite("rubik_test.jpg", frame)
-        print("WROTE IMAGE!!!!!!!!!")
+        print("Wrote captured image as file. VIEW IT TO CHECK COLOR!!!")
         return frame
 
     def read_camera_old(self):

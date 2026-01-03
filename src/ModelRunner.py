@@ -5,9 +5,9 @@ from DataIO import move_code_to_3_bits
 from CubeState import MOVE_SEQUENCE
 from ModelClass import RubikNN, device
 
-def load_model():
+def load_model(weights_path='model_checkpoint_weights3.pth'):
     model = RubikNN().to(device)
-    model.load_state_dict(torch.load('model_checkpoint_weights3.pth', weights_only=True), strict=False)
+    model.load_state_dict(torch.load(weights_path, weights_only=True), strict=False)
     return model
 
 def transform_X(x):

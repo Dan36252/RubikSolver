@@ -1,5 +1,5 @@
 from Claw import Claw
-import time
+import time, atexit
 
 class ClawMachine:
     
@@ -30,6 +30,8 @@ class ClawMachine:
 
         # center_cube() includes default_position()
         self.center_cube()
+
+        atexit.register(self.reset_D_claw)
 
     def move(self, move):
         # move =  F, R', U2, etc.
@@ -156,6 +158,9 @@ class ClawMachine:
         time.sleep(0.5)
         self.claws["B"].retract()
         time.sleep(0.4)
+
+    def reset_D_claw(self):
+        self.claws["D"].twist(2, doOffset=False, slow=False)
 
     def default_claws(self):
         #self.claws["D"].twist(2, doOffset=False, slow=False)
