@@ -6,10 +6,10 @@ class Claw:
     # Angles corresponding to the extended state of each claw.
     # These angles are when the claws fully push on the cube.
     extended_angles = {
-        "L": 30,
-        "F": 30,
-        "R": 30,
-        "B": 30,
+        "L": 35,
+        "F": 37,
+        "R": 20,
+        "B": 10,
         "D": 13
     }
 
@@ -40,7 +40,7 @@ class Claw:
         if face == "D":
             self.extendor.angle = Claw.extended_angles["D"]
         else:
-            self.extendor.angle = 163
+            self.retract()
 
         self.twister = servo.Servo(pca.channels[twisterChannel], min_pulse=500, max_pulse=2400)
         self.angle = 90 # The target angle of the Twister only
