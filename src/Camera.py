@@ -52,7 +52,7 @@ class Camera:
         # Let auto-exposure settle
         for _ in range(30):
             cap.read()
-            
+
         ret, frame = cap.read()
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         cv2.imwrite("rubik_test.jpg", frame)
@@ -113,5 +113,5 @@ class Camera:
         tmp_display_img = Image.fromarray(raw_img)
         tmp_display_img.show()
         time.sleep(10)
-        #cropped_img = raw_img.crop((left, upper, right, lower))
+        cropped_img = raw_img.crop((left, upper, right, lower))
         return cropped_img
