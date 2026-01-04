@@ -8,7 +8,7 @@ class Claw:
     extended_angles = {
         "L": 35,
         "F": 37,
-        "R": 20,
+        "R": 17,
         "B": 10,
         "D": 13
     }
