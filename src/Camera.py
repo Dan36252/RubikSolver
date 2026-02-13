@@ -108,12 +108,12 @@ class Camera:
         return img
 
     def get_cropped_img(self, optional_index=0):
-        left = 120
-        right = 680
+        left = 200
+        right = 840
         upper = 00
         lower = 830
         raw_img = self.get_raw_img()
-        cropped_img = raw_img#[upper:lower, left:right]
+        cropped_img = raw_img[upper:lower, left:right]
         cropped_img = self.prepare_image(cropped_img, 128, 128)
         #cv2.imshow("cropped", cropped_img)
         # cropped_img = cv2.cvtColor(cropped_img, cv2.COLOR_RGB2BGR)
