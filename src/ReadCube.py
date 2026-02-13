@@ -15,7 +15,7 @@ LEGAL_PIECES = {
     "centers" : [0, 1, 2, 3, 4, 5]
 }
 
-
+# TESTING 123
 
 class CubeReader:
 
