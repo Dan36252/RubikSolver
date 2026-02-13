@@ -1,0 +1,15 @@
+# created by virtualenv automatically
+src/RawData/
+src/NewProcessedData/
+src/ProcessedData/
+src/ProcessedDataOld/
+unused-data/
+bin/
+lib/
+*.zip
+*.log
+src/__pycache__/
+src/training_*
+src/tmp
+src/ALLFaceData/
+src/NewestScans/
