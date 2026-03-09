@@ -6,6 +6,7 @@ import numpy as np
 import re
 from pathlib import Path
 import time, random
+#from VisionAlgo2 import get_img_sectors_3x3
 
 def rotate_3x3_grid(arr):
     # Clockwise 90 degrees
@@ -146,7 +147,7 @@ def get_data(im_width=24, im_height=24, images_path="ALLFaceData", labels_path="
     X_test = []
     Y_test = []
 
-    test_sample_every = 20
+    test_sample_every = 30
     crop_decrease_size = 3
     num_light_shades = 7
 

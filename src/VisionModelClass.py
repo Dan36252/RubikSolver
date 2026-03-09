@@ -41,21 +41,23 @@ class VisionCNN(nn.Module):  # TODO: Ready to try training new model!
         self.input_shape_len = 0
         #self.last_input_size = 1
         self.layers = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=6, kernel_size=4, padding=0), # Output = 21x21
+            nn.Conv2d(in_channels=3, out_channels=36, kernel_size=6, padding=0, stride=2), # Output = 21x21
             nn.ReLU(),
-            nn.MaxPool2d(2), # Output = 11x11
-            nn.Conv2d(in_channels=6, out_channels=6, kernel_size=4, padding=0), # Output = 8x8
-            nn.ReLU(),
+            nn.MaxPool2d(2),
             #MyLambda(PrintInputSize),
             nn.Flatten(self.input_shape_len-3, self.input_shape_len-1),
             #MyLambda(self.store_input_size),
-            #MyLambda(PrintInputSize),
-            nn.Linear(294, 128),
+            MyLambda(PrintInputSize),
+            nn.Linear(25*36, 1024),
             #MyLambda(PrintInputSize),
             nn.ReLU(),
-            nn.Linear(128, 128),
+            nn.Linear(1024, 1024),
             nn.ReLU(),
-            nn.Linear(128, 54)
+            nn.Linear(1024, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 256),
+            nn.ReLU(),
+            nn.Linear(256, 54)
         )
 
     def store_input_size(self, x):

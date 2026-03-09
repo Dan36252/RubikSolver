@@ -9,7 +9,7 @@ import re
 from CubeState import MOVE_SEQUENCE
 from accelerate import Accelerator
 from datetime import datetime
-from NewModelClass import F2LValueNN, device, X_transform, Y_transform
+from NewModelClass import EncodedValueNN, device, X_transform, Y_transform
 
 #torch.set_num_threads(8)
 #torch.set_num_interop_threads(1)
@@ -17,10 +17,17 @@ from NewModelClass import F2LValueNN, device, X_transform, Y_transform
 # Reading Data from File
 print("===================== Setting Up Data =====================")
 from NewDataIO import load_data_f2l
+from DataIO import load_data
 
 print(f"Using {device} device")
 
-X_train, Y_train, X_test, Y_test = load_data_f2l()
+X_train, Y_train = load_data(processed_data_path="EncodedData", device=device, encode=True, output_type="dist", include_prev_moves_input=False)
+test_size = int(len(Y_train) * 0.01)
+X_test = X_train[-test_size:]
+Y_test = Y_train[-test_size:]
+X_train = X_train[:-test_size]
+Y_train = Y_train[:-test_size]
+
 
 # print(f"Train States: {X_train.shape}")
 # print(f"Train Moves: {Y_train.shape}")
@@ -73,18 +80,18 @@ print("Praise God!")
 from torch.utils.data import DataLoader
 
 batch_factor = 1
-batch_size = 64*batch_factor
+batch_size = 128*batch_factor
 
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 # Creating Neural Net!!!
 print("===================== Creating NN Object =====================")
-model = F2LValueNN()
+model = EncodedValueNN()
 #torch.compile(model)
 model = model.to(device)
 #torch.compile(model)
-model.load_state_dict(torch.load('WorkingF2LValueWeights.pth', weights_only=True), strict=False)
+#model.load_state_dict(torch.load('WorkingF2LValueWeights.pth', weights_only=True), strict=False)
 print(model)
 
 accelerator = Accelerator()

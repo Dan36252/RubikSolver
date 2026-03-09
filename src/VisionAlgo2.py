@@ -69,9 +69,9 @@ def get_img_sectors_3x3(img):
     for r in range(3):
         for c in range(3):
             sector_start_x = c * sector_width + padding
-            sector_end_x = sector_start_x + sector_width - (2*padding) if c < 2 else len(img[0]) - (2*padding)
+            sector_end_x = sector_start_x + sector_width - (2*padding) if c < 2 else len(img[0]) - padding
             sector_start_y = r * sector_height + padding
-            sector_end_y = sector_start_y + sector_height - (2*padding) if r < 2 else len(img) - (2*padding)
+            sector_end_y = sector_start_y + sector_height - (2*padding) if r < 2 else len(img) - padding
             #print(f"Start X: {sector_start_x}, End X: {sector_end_x}; Start Y: {sector_start_y}, End Y: {sector_end_y}")
             sectors.append(img[sector_start_y:sector_end_y, sector_start_x:sector_end_x])
     print(f"Sectors length: {len(sectors)} x {len(sectors[0])} x {len(sectors[0][0])}")
@@ -89,3 +89,54 @@ def get_img_sectors_3x3(img):
 # print(f"{path} --> {read_cube_face(img)}")
 # print(f"{path1} --> {read_cube_face(img1)}")
 # print(f"{path2} --> {read_cube_face(img2)}")
+
+
+images = [
+    "ALLFaceData/5-img_0003-1.jpg",
+    "ALLFaceData/1-03.jpg",
+    "ALLFaceData/1-62.jpg",
+    "ALLFaceData/1-IMG_5461.jpg",
+    "ALLFaceData/1-scanned_img_0000-5.jpg",
+    "ALLFaceData/1-scanned_img_0008-0.jpg",
+    "ALLFaceData/1-uncropped_img_0010-5.jpg",
+    "ALLFaceData/2-jan-15-img_0012-3.jpg",
+    "ALLFaceData/3-img_0002-5.jpg",
+    "ALLFaceData/4-5-img_0001-5.jpg",
+]
+
+for image in images:
+    img = cv2.imread(image)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(img, 100, 200)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        approx = cv2.approxPolyDP(cnt, 1, True)
+        if len(approx) == 4:
+            # likely cube face
+            # clean approx array
+            points = []
+            for n in approx:
+                p = []
+                p.append(n[0][0])
+                p.append(n[0][1])
+                points.append(p)
+            print(points)
+            maxHeight = len(img)
+            maxWidth = len(img[0])
+            output_pts = np.float32([[0, 0],
+                                     [0, maxHeight - 1],
+                                     [maxWidth - 1, maxHeight - 1],
+                                     [maxWidth - 1, 0]])
+            transform = cv2.getPerspectiveTransform(np.float32(points), output_pts)
+            warped = cv2.warpPerspective(img, M=transform, dsize=(24, 24))
+            print("Success!")
+            cv2.imshow(f"{image}", warped)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+    # sectors = get_img_sectors_3x3(img)
+    # for i, s in enumerate(sectors):
+    #     cv2.imshow(f"image {image} sticker {i}", s)
+    #     cv2.waitKey(0)
+    #     cv2.destroyAllWindows()

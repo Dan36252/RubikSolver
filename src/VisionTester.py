@@ -12,6 +12,9 @@ robot.claws["B"].vertical()
 robot.claws["F"].vertical()
 robot.claws["D"].set_angle(135)
 
+# LEFT OFF: trying to understand why CNN gives such bad predictions on the robot.
+# Is colorspace consistent in cam reading and data reading (yes...?), is cropping good, and is lighting good? (FIX LIGHTING AND CROPPING)
+
 c = 0
 while c < 300:
     c += 1

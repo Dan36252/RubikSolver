@@ -2,20 +2,16 @@ from sys import hash_info
 
 from Camera import Camera  # UNCOMMENT THIS
 from PIL import Image
-from CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, CubeState, flatten_data
+from CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState, flatten_data
 import time, cv2, random
 import numpy as np
 from VisionRunner import Model # UNCOMMENT THIS
 from VisionPiece import Piece
 from RubikTestProbabilities import TestProbabilities
-
-LEGAL_PIECES = {
-    "corners" : [[3, 0, 2], [3, 5, 0], [3, 4, 5], [3, 2, 4], [1, 0, 5], [1, 2, 0], [1, 4, 2], [1, 5, 4]],
-    "edges" : [[3, 0], [3, 5], [3, 4], [3, 2], [0, 2], [0, 5], [4, 5], [4, 2], [1, 0], [1, 2], [1, 4], [1, 5]],
-    "centers" : [0, 1, 2, 3, 4, 5]
-}
+from CubeExtractor import CubeExtractor
 
 # TESTING 123
+# This is the new Cursor Assisted branch
 
 class CubeReader:
 
@@ -75,7 +71,7 @@ class CubeReader:
 
     def correct_colors(self, colors, color_probs):
         # See description of algorithm below [in correct_one_color()]
-        corners, edges, centers = self.extract_pieces(colors, color_probs)
+        corners, edges, centers = CubeExtractor().extract_pieces(colors, color_probs)
 
         # Match extracted pieces to legal pieces
         print("Matching corners to legal pieces...")
@@ -123,63 +119,6 @@ class CubeReader:
         # Can use this loop to check which stickers can be switched for example.
         # But organize code into helper methods, including this loop.
 
-    def extract_pieces(self, colors, probabilities):
-        extraction_indices = {
-            "corners" : [[[0, 2], [1, 6], [2, 0]],
-                         [[1, 8], [4, 0], [2, 2]],
-                         [[1, 2], [5, 0], [4, 2]],
-                         [[1, 0], [0, 0], [5, 2]],
-                         [[2, 6], [3, 0], [0, 8]],
-                         [[2, 8], [4, 6], [3, 2]],
-                         [[4, 8], [5, 6], [3, 8]],
-                         [[0, 6], [3, 6], [5, 8]]],
-            "edges" : [[[0, 1], [1, 3]],
-                       [[1, 7], [2, 1]],
-                       [[1, 5], [4, 1]],
-                       [[1, 1], [5, 1]],
-                       [[0, 5], [2, 3]],
-                       [[2, 5], [4, 3]],
-                       [[4, 5], [5, 3]],
-                       [[5, 5], [0, 3]],
-                       [[0, 7], [3, 3]],
-                       [[2, 7], [3, 1]],
-                       [[4, 7], [3, 5]],
-                       [[5, 7], [3, 7]]],
-            "centers" : [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4]]
-        }
-
-        print("Extracting corners...")
-        corners = []
-        for corner in extraction_indices["corners"]:
-            corner_colors = []
-            corner_indices = corner.copy()
-            corner_probabilities = []
-            for c in corner:
-                corner_colors.append(colors[c[0]][c[1]])
-                corner_probabilities.append(probabilities[c[0]][c[1]].copy())
-            corners.append(Piece(corner_colors, corner_indices, corner_probabilities))
-
-        print("Extracting edges...")
-        edges = []
-        for edge in extraction_indices["edges"]:
-            edge_colors = []
-            edge_indices = edge.copy()
-            edge_probabilities = []
-            for e in edge:
-                edge_colors.append(colors[e[0]][e[1]])
-                edge_probabilities.append(probabilities[e[0]][e[1]].copy())
-            edges.append(Piece(edge_colors, edge_indices, edge_probabilities))
-
-        print("Extracting centers...")
-        centers = []
-        for center in extraction_indices["centers"]:
-            center_colors = [colors[center[0]][center[1]]]
-            center_indices = [center.copy()]
-            center_probabilities = [probabilities[center[0]][center[1]]]
-            centers.append(Piece(center_colors, center_indices, center_probabilities))
-
-
-        return corners, edges, centers
 
     def match_pieces_to_legal(self, extracted_pieces, legal_pieces, piece_type):
         """

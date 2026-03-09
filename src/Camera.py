@@ -109,7 +109,7 @@ class Camera:
 
     def get_cropped_img(self, optional_index=0):
         left = 200
-        right = 840
+        right = 800
         upper = 00
         lower = 830
         raw_img = self.get_raw_img()

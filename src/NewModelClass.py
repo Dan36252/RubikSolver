@@ -44,3 +44,26 @@ class F2LValueNN(nn.Module):
         pred = self.layers(x)
         return pred
 
+class EncodedValueNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layers = nn.Sequential(
+            # Input: 54 --> Cube State
+            nn.Linear(104, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 1),
+        )
+
+    def forward(self, x):
+        pred = self.layers(x)
+        return pred

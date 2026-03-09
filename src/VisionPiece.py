@@ -1,6 +1,6 @@
 
 class Piece:
-    def __init__(self, colors, indices, probabilities):
+    def __init__(self, colors, indices=None, probabilities=None):
         # colors: a list of 3 ints
         self.colors = colors
         self.piece_type = len(colors)
@@ -29,17 +29,19 @@ class Piece:
         new_colors = [-1]*self.piece_type
         new_probabilities = [None]*self.piece_type
 
+        do_probs = False if self.probabilities is None else len(self.probabilities) > 0
+
         i = 1
         while i < self.piece_type:
             new_colors[i] = self.colors[i-1]
-            new_probabilities[i] = self.probabilities[i-1]
+            if do_probs: new_probabilities[i] = self.probabilities[i-1]
             i += 1
 
         new_colors[0] = self.colors[self.piece_type-1]
-        new_probabilities[0] = self.probabilities[self.piece_type-1]
+        if do_probs: new_probabilities[0] = self.probabilities[self.piece_type-1]
 
         self.colors = new_colors
-        self.probabilities = new_probabilities
+        if do_probs: self.probabilities = new_probabilities
         self.orientation = self.orientation - 1 if self.orientation > 0 else (self.piece_type - 1)
 
     def standardize(self):

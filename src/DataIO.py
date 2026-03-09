@@ -9,7 +9,7 @@
 import torch
 import numpy as np
 import re
-from CubeState import MOVE_SEQUENCE
+from CubeState import MOVE_SEQUENCE, CubeState
 from pathlib import Path
 
 def increase_tri_bit(single_bit):
@@ -50,11 +50,13 @@ def move_code_to_3_bits(move_code):
 
     return l
 
-def read_cubestates_file(filepath, device='cpu'):
+def read_cubestates_file(filepath, device='cpu', encode=True, output_type="move", include_prev_moves_input=False):
     #solutionLine = "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 4 4 4 4 4 4 4 4 4 5 5 5 5 5 5 5 5 5"
-
+    print(f"Reading {filepath}...")
     with open(filepath, 'r') as file:
         lines = file.readlines()
+        num_lines = len(lines)
+        num_prints = 1
         states_list = []
         moves_list = []
         lsi = -1 # Last Solution Index in the moves_list, used for creating the "Distance till solution" value in label
@@ -64,6 +66,9 @@ def read_cubestates_file(filepath, device='cpu'):
             # Also, fill the cube state lists with all the previous moves that created that state.
 
             #print(f"Reading Line {line_i}")
+            if line_i > (10000*num_prints):
+                print(f"{line_i}/{num_lines}")
+                num_prints += 1
 
             if len(line) > 25:
                 # Several digits found; line is a Cube State!
@@ -74,50 +79,55 @@ def read_cubestates_file(filepath, device='cpu'):
                 str_arr = line.split()
                 for s in str_arr:
                     state.append(int(s))
+                if encode:
+                    cubestate = CubeState(data=state, encode=True)
+                    state = cubestate.get_encoded_data()
                 states_list.append(state)
 
             else: #elif len(re.findall("[A-Z]", line)) > 0 or line.strip() == "#":
                 # A letter was detected; line is a move!
                 # Convert move like 'D2' to its corresponding int ID in MOVE_SEQUENCE
                 move = []
-                move_one_hot = np.zeros((len(MOVE_SEQUENCE)), dtype=np.int8)
-                move_one_hot[MOVE_SEQUENCE.index(line.strip())] = 1
-                for b in move_one_hot:
-                    move.append(b)
+                if output_type == "move" or output_type == "both":
+                    move_one_hot = np.zeros((len(MOVE_SEQUENCE)), dtype=np.float32)
+                    move_one_hot[MOVE_SEQUENCE.index(line.strip())] = 1
+                    for b in move_one_hot:
+                        move.append(b)
                 moves_list.append(move)
 
                 # Add the "Distance till solution" to labels
-                if line.strip() == "#":
+                if (output_type == "dist" or output_type == "both") and line.strip() == "#":
                     #print(f"LSI = {lsi} -----------------------------------------------------------------")
                     tmi = len(moves_list)-1  # This Move Index (in moves_list, the one that is '#')
                     num_moves = tmi - lsi # Total num of moves for this cube solution; including #
                     for i in range(num_moves):
                         # Add the # moves till solution to each move in the move_list up to this solution move
-                        moves_list[lsi+i+1].append(-int(num_moves-(i+1)))
+                        moves_list[lsi+i+1].append(int(num_moves-(i+1)))
                         # Now, go through all the cubestates up to this solution state and add a move in the chain
                         # that resulted in that state (filling the 30 prev moves for the model input).
                         # Loops with index i and index j are working together to achieve this
-                        for j in range(30):
-                            prev_move_code = 0
-                            #print(f"Prev Move Index: {lsi+j-i}")
-                            if i < num_moves-2:
-                                if (i-j-1) >= 0:
-                                    # lsi+j-i is the index of the previous move in the chain of moves that
-                                    # we're currently checking for this cube state.
-                                    prev_move_code = np.array(moves_list[lsi+i-j]).argmax()
-                                prev_move_tri = move_code_to_3_bits(prev_move_code)
-                                # Insert the "3 bit representation" of this prev move right after cube state
-                                states_list[lsi+i+1].append(prev_move_tri[0])
-                                states_list[lsi+i+1].append(prev_move_tri[1])
-                                states_list[lsi+i+1].append(prev_move_tri[2])
-                            else:
-                                for k in range(3):
-                                    states_list[lsi + i + 1].append(0)
+                        if include_prev_moves_input:
+                            for j in range(30):
+                                prev_move_code = 0
+                                #print(f"Prev Move Index: {lsi+j-i}")
+                                if i < num_moves-2:
+                                    if (i-j-1) >= 0:
+                                        # lsi+j-i is the index of the previous move in the chain of moves that
+                                        # we're currently checking for this cube state.
+                                        prev_move_code = np.array(moves_list[lsi+i-j]).argmax()
+                                    prev_move_tri = move_code_to_3_bits(prev_move_code)
+                                    # Insert the "3 bit representation" of this prev move right after cube state
+                                    states_list[lsi+i+1].append(prev_move_tri[0])
+                                    states_list[lsi+i+1].append(prev_move_tri[1])
+                                    states_list[lsi+i+1].append(prev_move_tri[2])
+                                else:
+                                    for k in range(3):
+                                        states_list[lsi + i + 1].append(0)
 
                     lsi = tmi
 
-        X_train = np.array(states_list, dtype=np.int8)
-        Y_train = np.array(moves_list, dtype=np.int8)
+        X_train = np.array(states_list, dtype=np.float32)
+        Y_train = np.array(moves_list, dtype=np.float32)
 
         print("Praise God!")
 
@@ -140,43 +150,67 @@ def write_cubestates_file(filepath, cubestates, label_moves):
             file.write(state_str+"\n")
             file.write(label_str + "\n")
 
-def load_processed_data(filepath, device='cpu'):
+def load_processed_data(filepath, device='cpu', encode=True):
     X_train = []
     Y_train = []
 
     with open(filepath, 'r') as file:
         lines = file.readlines()
         for line in lines:
-            if len(line) > 20:
+            if len(line) > 57:
                 # Line is a cubestate
                 color_list = line.split()
                 num_list = []
                 for c in color_list:
-                    num_list.append(int(c))
+                    num_list.append(c)
                 X_train.append(num_list)
             else:
                 # Line is a move
                 label_list = line.split()
                 num_list = []
                 for c in label_list:
-                    num_list.append(int(c))
+                    num_list.append(c)
                 Y_train.append(num_list)
 
     print("File: "+filepath)
 
-    X_train = np.array(X_train, dtype=np.int8)
-    Y_train = np.array(Y_train, dtype=np.int8)
+    X_train = np.array(X_train, dtype=np.float32)
+    Y_train = np.array(Y_train, dtype=np.float32)
 
     return X_train, Y_train
 
-def load_data(device="cpu"):
+def load_data(processed_data_path="ProcessedData", device="cpu", encode=True, output_type="move", include_prev_moves_input=False):
+    # OUTPUT TYPES: 'move', 'dist', 'both'
+    # 'move' - reads and saves only the move letter code to be performed after each state (as a One Hot vector of dim ~20)
+    # 'dist' - reads and saves only the number of moves till the solution state
+    # 'both' - combines 'move' output and then 'dist' output
+
     raw_dir_path = Path('RawData')
-    processed_dir_path = Path('ProcessedData')
+    processed_dir_path = Path(processed_data_path)
     # raw_dir_path = Path('/content/drive/MyDrive/RubikSolver/src/RawData')
     # processed_dir_path = Path('/content/drive/MyDrive/RubikSolver/src/ProcessedData')
 
-    X_train = np.empty((0, 144), dtype=np.int8)
-    Y_train = np.empty((0, 21), dtype=np.int8)
+    input_len = 0
+    if not encode:
+        input_len = 54
+    else:
+        input_len = 104
+
+    if include_prev_moves_input:
+        input_len = input_len + 90
+
+    output_len = 0
+    if output_type == "move":
+        output_len = 20
+    elif output_type == "dist":
+        output_len = 1
+    elif output_type == "both":
+        output_len = 21
+    else:
+        raise Exception(f"Could not load data. output_type '{output_type}' is invalid. Please use 'move', 'dist', or 'both'")
+
+    X_train = np.empty((0, input_len), dtype=np.float32)
+    Y_train = np.empty((0, output_len), dtype=np.float32)
 
     # For each raw data file, check if processed file exists.
     # If it does, load it.
@@ -184,7 +218,7 @@ def load_data(device="cpu"):
     # Append to final X_train and Y_train with each step.
     counter = 0
     for raw_path in raw_dir_path.iterdir():
-        if counter >= 10:
+        if counter >= 11: # For loading specific number of files
             break
         counter += 1
         if raw_path.is_file():
@@ -200,7 +234,7 @@ def load_data(device="cpu"):
                         # If processed number exists, check if matches raw file number
                         if file_num_r == file_num_p.group():
                             # Processed data match found! Load processed data
-                            X_train1, Y_train1 = load_processed_data(str(processed_path), device)
+                            X_train1, Y_train1 = load_processed_data(str(processed_path), device, encode)
                             # Append loaded data to final X_train and Y_train
                             X_train = np.concat((X_train, X_train1))
                             Y_train = np.concat((Y_train, Y_train1))
@@ -210,7 +244,7 @@ def load_data(device="cpu"):
 
                 if not loaded_processed:
                     # If no corresponding processed file was found, read and write
-                    X_train1, Y_train1 = read_cubestates_file(str(raw_path), device)
+                    X_train1, Y_train1 = read_cubestates_file(str(raw_path), device, encode, output_type, include_prev_moves_input)
                     # Append read data to final X_train and Y_train
                     X_train = np.concat((X_train, X_train1))
                     Y_train = np.concat((Y_train, Y_train1))
@@ -219,3 +253,4 @@ def load_data(device="cpu"):
                     write_cubestates_file((processed_dir_path/('processed_data'+str(file_num_r)+'.txt')), X_train1, Y_train1)
 
     return X_train, Y_train
+

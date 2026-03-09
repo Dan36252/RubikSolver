@@ -20,7 +20,7 @@ def load_model(weights_path="LatestCNNVisionWeights.pth"):#"WorkingVisionWeights
 class Model:
     def __init__(self, use_cnn=True):
         #super(Model, self).__init__()
-        self.model = load_model("LatestCNNVisionWeights.pth" if use_cnn else "WorkingVisionWeights.pth")
+        self.model = load_model("CNN-Vision-3-8-Weights.pth" if use_cnn else "WorkingVisionWeights.pth")
         self.use_cnn = use_cnn
 
     def predict_probs(self, correct_col_img):

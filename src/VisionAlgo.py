@@ -105,7 +105,7 @@ epochs = 300
 
 # Custom learning rate function
 def learning_rate_fun(epoch):
-    return 1#1/((epoch+1)*2)  # This is a learning rate multiplier, not the rate itself
+    return 0.97**(epoch)#1/((epoch+1)*2)  # This is a learning rate multiplier, not the rate itself
 
 # Initialize Optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
