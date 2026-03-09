@@ -7,7 +7,7 @@ from DeepCubeA.environments.cube3 import Cube3
 print("Starting!")
 
 # Initializing Claw Machine
-robot = ClawMachine()
+#robot = ClawMachine()
 
 # Reading and reconstructing Cube
 # reader = CubeReader(robot)
