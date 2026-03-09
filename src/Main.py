@@ -40,4 +40,4 @@ print(deep_cube_state)
 
 print("\n\nSTARTING DEEPCUBE SOLUTION SEARCH!")
 env = Cube3()
-bwas_python(jetson_default_args, env, [deep_cube_state])
+bwas_python(jetson_default_args(), env, [deep_cube_state])
