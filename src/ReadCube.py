@@ -2,7 +2,7 @@ from sys import hash_info
 
 from Camera import Camera  # UNCOMMENT THIS
 from PIL import Image
-from CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState, flatten_data
+from CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState
 import time, cv2, random
 import numpy as np
 from VisionRunner import Model # UNCOMMENT THIS
