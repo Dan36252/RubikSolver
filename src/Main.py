@@ -1,7 +1,7 @@
 from ClawMachine import ClawMachine
 from ReadCube import CubeReader
 from CubeState import CubeState
-from DeepCubeA.search_methods.astar import bwas_python
+from DeepCubeA.search_methods.astar import bwas_python, jetson_default_args
 from DeepCubeA.environments.cube3 import Cube3
 
 print("Starting!")
@@ -40,4 +40,4 @@ print(deep_cube_state)
 
 print("\n\nSTARTING DEEPCUBE SOLUTION SEARCH!")
 env = Cube3()
-bwas_python(env, [deep_cube_state])
+bwas_python(jetson_default_args, env, [deep_cube_state])

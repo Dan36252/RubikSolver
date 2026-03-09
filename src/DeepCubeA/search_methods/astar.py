@@ -400,6 +400,13 @@ def main():
 
     pickle.dump(results, open(results_file, "wb"), protocol=-1)
 
+jetson_default_args = {
+    "model_dir" : "saved_models/cube3/current/",
+    "nnet_batch_size" : 10000,
+    "weight" : 0.6,
+    "batch_size" : 10000,
+    "verbose" : True,
+}
 
 def bwas_python(args, env: Environment, states: List[State]):
     # get device
