@@ -402,7 +402,7 @@ def main():
 
 class jetson_default_args:
     def __init__(self):
-        self.model_dir = os.path.abspath("saved_models/cube3/current")
+        self.model_dir = "src/DeepCubeA/saved_models/cube3/current"
         self.nnet_batch_size = 10000
         self.weight = 0.6
         self.batch_size = 10000
