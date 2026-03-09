@@ -133,6 +133,7 @@ def get_device() -> Tuple[torch.device, List[int], bool]:
 # loading nnet
 def load_nnet(model_file: str, nnet: nn.Module, device: torch.device = None) -> nn.Module:
     # get state dict
+    print(f"Current dir: {os.getcwd()}")
     if device is None:
         state_dict = torch.load(model_file)
     else:
