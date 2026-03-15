@@ -3,9 +3,10 @@ import numpy as np
 from torch import nn
 from random import randrange
 
-from utils.pytorch_models import ResnetModel
-from .environment_abstract import Environment, State
-
+from DeepCubeA.utils.pytorch_models import ResnetModel
+from DeepCubeA.environments.environment_abstract import Environment, State
+from CubeState import CubeState
+from NewModelClass import EncodedValueNN
 
 class Cube3State(State):
     __slots__ = ['colors', 'hash']
@@ -28,13 +29,18 @@ class Cube3(Environment):
     moves: List[str] = ["%s%i" % (f, n) for f in ['U', 'D', 'L', 'R', 'B', 'F'] for n in [-1, 1]]
     moves_rev: List[str] = ["%s%i" % (f, n) for f in ['U', 'D', 'L', 'R', 'B', 'F'] for n in [1, -1]]
 
-    def __init__(self):
+    def __init__(self, f2l_solution=False, encode_nn_input=False):
         super().__init__()
         self.dtype = np.uint8
         self.cube_len = 3
 
         # solved state
         self.goal_colors: np.ndarray = np.arange(0, (self.cube_len ** 2) * 6, 1, dtype=self.dtype)
+        self.f2l_solution = f2l_solution
+        # f2l mask: the cube state columns that must match the solved state in order for f2l to be considered solved
+        self.f2l_mask = [3, 4, 5, 6, 7, 8, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 39, 40, 41, 42, 43, 44, 48, 49, 50, 51, 52, 53]
+
+        self.encode_nn_input = encode_nn_input
 
         # get idxs changed for moves
         self.rotate_idxs_new: Dict[str, np.ndarray]
@@ -70,28 +76,41 @@ class Cube3(Environment):
 
     def is_solved(self, states: List[Cube3State]) -> np.ndarray:
         states_np = np.stack([state.colors for state in states], axis=0)
-        is_equal = np.equal(states_np, np.expand_dims(self.goal_colors, 0))
+        goal_colors = self.goal_colors
+        if self.f2l_solution:
+            states_np = states_np[:, self.f2l_mask]
+            goal_colors = [c for c in self.f2l_mask]
+        is_equal = np.equal(states_np, np.expand_dims(goal_colors, 0))
 
         return np.all(is_equal, axis=1)
 
     def state_to_nnet_input(self, states: List[Cube3State]) -> List[np.ndarray]:
-        states_np = np.stack([state.colors for state in states], axis=0)
+        if self.encode_nn_input:
+            encoded_states = []
+            for s in states:
+                np.array(encoded_states.append(CubeState(s.colors.tolist(), encode=True).encoded_data))
+            return encoded_states
+        else:
+            states_np = np.stack([state.colors for state in states], axis=0)
 
-        representation_np: np.ndarray = states_np / (self.cube_len ** 2)
-        representation_np: np.ndarray = representation_np.astype(self.dtype)
+            representation_np: np.ndarray = states_np / (self.cube_len ** 2)
+            representation_np: np.ndarray = representation_np.astype(self.dtype)
 
-        representation: List[np.ndarray] = [representation_np]
+            representation: List[np.ndarray] = [representation_np]
 
-        return representation
+            return representation
 
     def get_num_moves(self) -> int:
         return len(self.moves)
 
     def get_nnet_model(self) -> nn.Module:
-        state_dim: int = (self.cube_len ** 2) * 6
-        nnet = ResnetModel(state_dim, 6, 5000, 1000, 4, 1, True)
+        if self.encode_nn_input:
 
-        return nnet
+        else:
+            state_dim: int = (self.cube_len ** 2) * 6
+            nnet = ResnetModel(state_dim, 6, 5000, 1000, 4, 1, True)
+
+            return nnet
 
     def generate_states(self, num_states: int, backwards_range: Tuple[int, int]) -> Tuple[List[Cube3State], List[int]]:
         assert (num_states > 0)

@@ -3,7 +3,7 @@ import numpy as np
 import os
 import torch
 from torch import nn
-from environments.environment_abstract import Environment, State
+from DeepCubeA.environments.environment_abstract import Environment, State
 from collections import OrderedDict
 import re
 from random import shuffle

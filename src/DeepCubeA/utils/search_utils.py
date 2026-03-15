@@ -1,7 +1,7 @@
 from typing import List, Tuple
 import numpy as np
-from environments.environment_abstract import Environment, State
-from utils import misc_utils
+from DeepCubeA.environments.environment_abstract import Environment, State
+from DeepCubeA.utils import misc_utils
 
 
 def is_valid_soln(state: State, soln: List[int], env: Environment) -> bool:

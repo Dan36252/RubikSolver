@@ -1,5 +1,5 @@
-from ClawMachine import ClawMachine
-from ReadCube import CubeReader
+#from ClawMachine import ClawMachine
+#from ReadCube import CubeReader
 from CubeState import CubeState
 from DeepCubeA.search_methods.astar import bwas_python, jetson_default_args
 from DeepCubeA.environments.cube3 import Cube3, Cube3State
@@ -40,5 +40,5 @@ print(deep_cube_state)
 # [27, 28, 35, 3, 4, 16, 42, 21, 33, 24, 34, 18, 25, 13, 12, 44, 23, 0, 51, 39, 9, 19, 22, 10, 53, 30, 38, 6, 7, 45, 5, 31, 14, 29, 32, 36, 47, 1, 15, 46, 40, 41, 11, 37, 20, 2, 52, 8, 48, 49, 50, 17, 43, 26]
 
 print("\n\nSTARTING DEEPCUBE SOLUTION SEARCH!")
-env = Cube3()
-bwas_python(jetson_default_args(), env, [Cube3State(np.array(deep_cube_state))])
+env = Cube3(f2l_solution=True, encode_nn_input=True)
+bwas_python(jetson_default_args(), env, [Cube3State(np.array(deep_cube_state))], custom_hr=True)

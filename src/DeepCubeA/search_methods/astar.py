@@ -1,18 +1,20 @@
 from typing import List, Tuple, Dict, Callable, Optional, Any
-from environments.environment_abstract import Environment, State
+from DeepCubeA.environments.environment_abstract import Environment, State
 import numpy as np
 from heapq import heappush, heappop
 from subprocess import Popen, PIPE
 
 from argparse import ArgumentParser
 import torch
-from utils import env_utils, nnet_utils, search_utils, misc_utils, data_utils
+from DeepCubeA.utils import env_utils, nnet_utils, search_utils, misc_utils, data_utils
 import pickle
 import time
 import sys
 import os
 import socket
 from torch.multiprocessing import Process
+
+from NewModelRunner import Model as CustomHR
 
 
 class Node:
@@ -402,14 +404,14 @@ def main():
 
 class jetson_default_args:
     def __init__(self):
-        self.model_dir = "src/DeepCubeA/saved_models/cube3/current"
+        self.model_dir = "DeepCubeA/saved_models/cube3/current/model_state_dict.pt"
         self.nnet_batch_size = 10000
         self.weight = 0.6
         self.batch_size = 10000
         self.verbose = True
 
 
-def bwas_python(args, env: Environment, states: List[State]):
+def bwas_python(args, env: Environment, states: List[State], custom_hr=False):
     # get device
     on_gpu: bool
     device: torch.device
@@ -417,8 +419,12 @@ def bwas_python(args, env: Environment, states: List[State]):
 
     print("device: %s, devices: %s, on_gpu: %s" % (device, devices, on_gpu))
 
-    heuristic_fn = nnet_utils.load_heuristic_fn(args.model_dir, device, on_gpu, env.get_nnet_model(),
-                                                env, clip_zero=True, batch_size=args.nnet_batch_size)
+    heuristic_fn = None
+    if not custom_hr:
+        heuristic_fn = nnet_utils.load_heuristic_fn(args.model_dir, device, on_gpu, env.get_nnet_model(),
+                                                    env, clip_zero=True, batch_size=args.nnet_batch_size)
+    else:
+        heuristic_fn = CustomHR().get_state_value
 
     solns: List[List[int]] = []
     paths: List[List[State]] = []

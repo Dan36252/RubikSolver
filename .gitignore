@@ -13,3 +13,4 @@ src/training_*
 src/tmp
 src/ALLFaceData/
 src/NewestScans/
+src/EncodedValueWeights.pth

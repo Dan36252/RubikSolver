@@ -3,7 +3,116 @@ Solved state:
  24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
  48 49 50 51 52 53]
 device: cpu, devices: [], on_gpu: False
+Current dir: /Users/daniel/Programming/RubikSolver/.venv/src/DeepCubeA
 Root state:
 [ 8 10 36  3  4 12 27 34 53  9  5  0 46 13 19 11 30  2 18 52 15 41 22 21
  47  1 35 44  7 17 16 31 37 24 48 29 45 14  6 25 40 39 42 28 33 26 23 38
  43 49 50 20 32 51]
+Itr: 0, Added to OPEN - Min/Max Heur(PathCost): 13.99(1.00)/14.73(1.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.01, add: 0.00, itr: 0.01
+
+Itr: 1, Added to OPEN - Min/Max Heur(PathCost): 13.03(2.00)/14.89(2.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.01, add: 0.00, itr: 0.01
+
+Itr: 2, Added to OPEN - Min/Max Heur(PathCost): 12.04(3.00)/15.01(3.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.05, add: 0.00, itr: 0.05
+
+Itr: 3, Added to OPEN - Min/Max Heur(PathCost): 10.33(4.00)/15.22(4.00) 
+Times - pop: 0.00, expand: 0.04, check: 0.02, heur: 0.36, add: 0.00, itr: 0.42
+
+Itr: 4, Added to OPEN - Min/Max Heur(PathCost): 10.40(5.00)/15.33(5.00) 
+Times - pop: 0.00, expand: 0.24, check: 0.17, heur: 3.40, add: 0.02, itr: 3.83
+
+Itr: 5, Added to OPEN - Min/Max Heur(PathCost): 9.53(6.00)/14.83(6.00) 
+Times - pop: 0.01, expand: 0.31, check: 0.16, heur: 3.34, add: 0.02, itr: 3.84
+
+Itr: 6, Added to OPEN - Min/Max Heur(PathCost): 8.59(7.00)/14.68(7.00) 
+Times - pop: 0.01, expand: 0.38, check: 0.16, heur: 3.24, add: 0.02, itr: 3.82
+
+Itr: 7, Added to OPEN - Min/Max Heur(PathCost): 8.29(8.00)/14.54(8.00) 
+Times - pop: 0.01, expand: 0.31, check: 0.16, heur: 3.26, add: 0.02, itr: 3.77
+
+Itr: 8, Added to OPEN - Min/Max Heur(PathCost): 8.20(9.00)/14.59(9.00) 
+Times - pop: 0.01, expand: 0.34, check: 0.16, heur: 3.18, add: 0.02, itr: 3.72
+
+Itr: 9, Added to OPEN - Min/Max Heur(PathCost): 8.16(10.00)/14.19(10.00) 
+Times - pop: 0.01, expand: 0.39, check: 0.16, heur: 3.21, add: 0.02, itr: 3.79
+
+Itr: 10, Added to OPEN - Min/Max Heur(PathCost): 8.18(11.00)/14.43(9.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.26, add: 0.02, itr: 3.63
+
+Itr: 11, Added to OPEN - Min/Max Heur(PathCost): 7.71(12.00)/14.55(8.00) 
+Times - pop: 0.02, expand: 0.45, check: 0.17, heur: 3.25, add: 0.02, itr: 3.92
+
+Itr: 12, Added to OPEN - Min/Max Heur(PathCost): 7.05(13.00)/14.74(7.00) 
+Times - pop: 0.02, expand: 0.53, check: 0.17, heur: 3.26, add: 0.02, itr: 4.00
+
+Itr: 13, Added to OPEN - Min/Max Heur(PathCost): 7.71(14.00)/14.51(7.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.17, add: 0.02, itr: 3.54
+
+Itr: 14, Added to OPEN - Min/Max Heur(PathCost): 7.03(15.00)/14.53(7.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.24, add: 0.02, itr: 3.61
+
+Itr: 15, Added to OPEN - Min/Max Heur(PathCost): 7.05(15.00)/14.69(6.00) 
+Times - pop: 0.02, expand: 0.63, check: 0.17, heur: 3.21, add: 0.02, itr: 4.04
+
+Itr: 16, Added to OPEN - Min/Max Heur(PathCost): 7.04(15.00)/14.78(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.15, add: 0.02, itr: 3.52
+
+Itr: 17, Added to OPEN - Min/Max Heur(PathCost): 7.40(14.00)/14.82(6.00) 
+Times - pop: 0.02, expand: 0.74, check: 0.20, heur: 3.12, add: 0.02, itr: 4.10
+
+Itr: 18, Added to OPEN - Min/Max Heur(PathCost): 7.05(15.00)/14.70(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.36, add: 0.02, itr: 3.74
+
+Itr: 19, Added to OPEN - Min/Max Heur(PathCost): 7.05(15.00)/14.85(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.18, add: 0.02, itr: 3.56
+
+Itr: 20, Added to OPEN - Min/Max Heur(PathCost): 5.91(16.00)/14.89(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.34, add: 0.76, itr: 4.45
+
+Itr: 21, Added to OPEN - Min/Max Heur(PathCost): 5.00(17.00)/14.72(7.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.37, add: 0.02, itr: 3.75
+
+Itr: 22, Added to OPEN - Min/Max Heur(PathCost): 4.05(18.00)/14.76(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.19, add: 0.02, itr: 3.56
+
+Itr: 23, Added to OPEN - Min/Max Heur(PathCost): 3.01(19.00)/14.74(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.12, add: 0.02, itr: 3.49
+
+Itr: 24, Added to OPEN - Min/Max Heur(PathCost): 1.99(20.00)/14.84(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.18, add: 0.94, itr: 4.47
+
+Itr: 25, Added to OPEN - Min/Max Heur(PathCost): 1.00(21.00)/14.78(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.17, add: 0.02, itr: 3.55
+
+Itr: 26, Added to OPEN - Min/Max Heur(PathCost): 0.00(22.00)/14.79(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.18, heur: 3.19, add: 0.02, itr: 3.57
+
+Itr: 27, Added to OPEN - Min/Max Heur(PathCost): 1.00(23.00)/14.79(6.00) 
+Times - pop: 0.02, expand: 0.16, check: 0.17, heur: 3.27, add: 0.02, itr: 3.65
+
+Times - pop: 0.43, expand: 6.55, check: 4.12, heur: 78.10, add: 2.20, itr: 91.40, num_itrs: 28
+State: 0, SolnCost: 22.00, # Moves: 22, # Nodes Gen: 2,894,352, Time: 91.43
+Root state:
+[42 14 44 12  4  1 36 10 29 17 50 26  5 13 32 38 28 11 27 30  2  3 22 48
+  0 25  9 45 37 15 52 31 21 35 19  6  8 43 53 41 40 23 51 16 20 47 46 18
+  7 49 39 24 34 33]
+Itr: 0, Added to OPEN - Min/Max Heur(PathCost): 13.88(1.00)/14.62(1.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.01, add: 0.00, itr: 0.01
+
+Itr: 1, Added to OPEN - Min/Max Heur(PathCost): 13.14(2.00)/14.79(2.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.01, add: 0.00, itr: 0.01
+
+Itr: 2, Added to OPEN - Min/Max Heur(PathCost): 12.20(3.00)/15.14(3.00) 
+Times - pop: 0.00, expand: 0.00, check: 0.00, heur: 0.04, add: 0.00, itr: 0.05
+
+Itr: 3, Added to OPEN - Min/Max Heur(PathCost): 11.23(4.00)/15.17(4.00) 
+Times - pop: 0.00, expand: 0.01, check: 0.02, heur: 0.36, add: 0.00, itr: 0.39
+
+Itr: 4, Added to OPEN - Min/Max Heur(PathCost): 10.41(5.00)/15.19(5.00) 
+Times - pop: 0.00, expand: 0.15, check: 0.17, heur: 3.14, add: 0.02, itr: 3.48
+
+Itr: 5, Added to OPEN - Min/Max Heur(PathCost): 9.97(6.00)/14.74(6.00) 
+Times - pop: 0.01, expand: 2.75, check: 0.17, heur: 3.10, add: 0.02, itr: 6.05
+

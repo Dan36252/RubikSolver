@@ -5,7 +5,7 @@
 # sys.path.insert(0, '/content/drive/MyDrive/RubikSolver/src')
 
 import numpy as np
-import re, copy
+import re, copy, math
 from CubeTurnMaps import MAPS, get_index_from_code
 from CubeExtractor import CubeExtractor
 
@@ -63,9 +63,10 @@ class CubeState:
         self.g_cost = g_cost
         self.total_cost = 1e10
 
-        self.flat_data = data
-        self.shaped_data = self.shape_data(data)
-        if encode: self.encoded_data = self.encode_data()
+        is_data_deepcube = CubeState.is_data_deepcube(data)
+        self.flat_data = data if not is_data_deepcube else CubeState.deepcube_to_flat(data)
+        self.shaped_data = CubeState.shape_data(self.flat_data)
+        if encode: self.encoded_data = CubeState.encode_data(self.shaped_data)
         #if encode: print(self.encoded_data)
 
     def __eq__(self, other):
@@ -85,49 +86,69 @@ class CubeState:
         else:
             return self.encoded_data
 
-    def get_deepcube_data(self):
-        print(self.flat_data)
+    @staticmethod
+    def get_deepcube_data(flat_data, shaped_data):
+        print(flat_data)
         # Extract Pieces from Shaped Data
         extractor = CubeExtractor()
-        corners_ext, edges_ext, centers_ext = extractor.extract_pieces(self.shaped_data)
+        corners_ext, edges_ext, centers_ext = extractor.extract_pieces(shaped_data)
 
         # Create lists to store corresponding converted sticker IDs
         final_stickers = [0]*54
 
         # Fill the final_stickers list based on the legal pieces that each extracted piece matches, and the extracted pieces' orientation
-        self._add_pieces_to_deepflat(corners_ext, "corners", final_stickers)
-        self._add_pieces_to_deepflat(edges_ext, "edges", final_stickers)
-        self._add_pieces_to_deepflat(centers_ext, "centers", final_stickers)
+        CubeState._add_pieces_to_deepflat(corners_ext, "corners", final_stickers)
+        CubeState._add_pieces_to_deepflat(edges_ext, "edges", final_stickers)
+        CubeState._add_pieces_to_deepflat(centers_ext, "centers", final_stickers)
 
         return final_stickers
 
-    def _shaped_index_to_flat(self, shaped_index):
+    @staticmethod
+    def is_data_deepcube(flat_data):
+        for c in flat_data:
+            if c >= 6:
+                return True
+        return False
+
+    @staticmethod
+    def deepcube_to_flat(data):
+        flat_data = []
+        for c in data:
+            flat_data.append(math.floor(c/9))
+        return flat_data
+
+    @staticmethod
+    def _shaped_index_to_flat(shaped_index):
         return (9*shaped_index[0])+shaped_index[1]
 
-    def _add_pieces_to_deepflat(self, extracted_pieces, pieces_type, final_stickers):
+    @staticmethod
+    def _add_pieces_to_deepflat(extracted_pieces, pieces_type, final_stickers):
         for piece in extracted_pieces:
-            legal_index, matching_l = self.get_matching_legal_piece(piece, LEGAL_PIECES[pieces_type])
-            p_orient = self.get_piece_orientation(piece, matching_l)
+            legal_index, matching_l = CubeState.get_matching_legal_piece(piece, LEGAL_PIECES[pieces_type])
+            p_orient = CubeState.get_piece_orientation(piece, matching_l)
             #print(p_orient)
             matching_dstickers = DEEPCUBE_PIECES_TO_STICKERS[pieces_type][legal_index]
             for s in range(piece.piece_type):
                 adjusted_index = (s + p_orient) % piece.piece_type
                 if p_orient == 2: print(adjusted_index)
-                flat_index = self._shaped_index_to_flat(piece.indices[s])
+                flat_index = CubeState._shaped_index_to_flat(piece.indices[s])
                 dsticker_id = matching_dstickers[adjusted_index] if type(matching_dstickers) == list else matching_dstickers
                 final_stickers[flat_index] = dsticker_id
 
     def set_total_cost(self, total_cost):
         self.total_cost = total_cost
 
-    def standardize_data(self):
-        for i in range(len(self.shaped_data)):
-            this_face = self.shaped_data[i][4]
+    @staticmethod
+    def standardize_data(shaped_data):
+        # Unused method; supposed to rearrange the faces of a shaped_data 2d list, and return the corresponding flat data
+        for i in range(len(shaped_data)):
+            this_face = shaped_data[i][4]
             if this_face != i:
-                for j in range(len(self.shaped_data)-i-1):
-                    if self.shaped_data[i+j+1][4] == i:
-                        self.swap_faces(self.shaped_data, i, i+j+1)
-        self.flat_data = self.flatten_data(self.shaped_data)
+                for j in range(len(shaped_data)-i-1):
+                    if shaped_data[i+j+1][4] == i:
+                        CubeState.swap_faces(shaped_data, i, i+j+1)
+        flat_data = CubeState.flatten_data(shaped_data)
+        return flat_data
 
     def move(self, move_letter):
         # move_letter can be R, L', U2, etc.
@@ -144,8 +165,8 @@ class CubeState:
         # print("New state:")
         # print(new_data)
         self.flat_data = new_data
-        self.shaped_data = self.shape_data(self.flat_data)
-        if self.encode: self.encoded_data = self.encode_data()
+        self.shaped_data = CubeState.shape_data(self.flat_data)
+        if self.encode: self.encoded_data = CubeState.encode_data(self.shaped_data)
 
         # face_match = re.search("[A-Z]", move_letter)
         # if face_match != None:
@@ -172,13 +193,15 @@ class CubeState:
         new_cubestate.move(move_letter)
         return new_cubestate
 
-    def swap_faces(self, arr, i1, i2):
+    @staticmethod
+    def swap_faces(arr, i1, i2):
         # arr: numpy array of shape (6, 9)
         temp = arr[i1].copy()
         arr[i1] = arr[i2].copy()
         arr[i2] = temp
 
-    def shape_data(self, flat_data):
+    @staticmethod
+    def shape_data(flat_data):
 
         if len(flat_data) != 54:
             print(f"WARNING: data is len {len(flat_data)}, but 54 is expected")
@@ -194,7 +217,8 @@ class CubeState:
 
         return shaped_data
 
-    def flatten_data(self, shaped_data):
+    @staticmethod
+    def flatten_data(shaped_data):
         flat_data = []
 
         for f in range(len(shaped_data)):
@@ -203,15 +227,16 @@ class CubeState:
 
         return flat_data
 
-    def encode_data(self):
+    @staticmethod
+    def encode_data(shaped_data):
         # Extract Pieces from Shaped Data
         extractor = CubeExtractor()
-        corners_ext, edges_ext, centers_ext = extractor.extract_pieces(self.shaped_data)
+        corners_ext, edges_ext, centers_ext = extractor.extract_pieces(shaped_data)
 
         # Match each extracted piece to the corresponding standard piece (in LEGAL_PIECES) and calculate piece vector + orientation
-        enc_corners = self.encode_pieces(corners_ext, LEGAL_PIECES["corners"])
-        enc_edges = self.encode_pieces(edges_ext, LEGAL_PIECES["edges"])
-        enc_centers = self.encode_pieces(centers_ext, LEGAL_PIECES["centers"])
+        enc_corners = CubeState.encode_pieces(corners_ext, LEGAL_PIECES["corners"])
+        enc_edges = CubeState.encode_pieces(edges_ext, LEGAL_PIECES["edges"])
+        enc_centers = CubeState.encode_pieces(centers_ext, LEGAL_PIECES["centers"])
 
         # Combine encoded pieces into one vector
         enc_list = []
@@ -231,7 +256,8 @@ class CubeState:
     face_x_dirs = [[0,0,1], [1,0,0], [1,0,0], [1,0,0], [0,0,-1], [-1,0,0]]
     face_y_dirs = [[0,1,0], [0,0,-1], [0,1,0], [0,0,1], [0,1,0], [0,1,0]]
 
-    def get_matching_legal_piece(self, vision_piece, legal_pieces):
+    @staticmethod
+    def get_matching_legal_piece(vision_piece, legal_pieces):
         for i, l_piece in enumerate(legal_pieces):
             l_set = set(l_piece) if type(l_piece) == list else l_piece
             v_set = set(vision_piece.colors) if len(vision_piece.colors) > 1 else vision_piece.colors[0]
@@ -239,7 +265,8 @@ class CubeState:
                 return i, l_piece
         raise Exception(f"Could not match a legal piece to this vision piece: {vision_piece.colors}")
 
-    def encode_pieces(self, extracted_pieces, legal_pieces):
+    @staticmethod
+    def encode_pieces(extracted_pieces, legal_pieces):
         #print("Encoding pieces.")
         codes = []
         for legal_c in legal_pieces:
@@ -249,14 +276,15 @@ class CubeState:
                 extracted_set = set(piece.colors) if len(piece.colors) > 1 else piece.colors[0]
                 if legal_set == extracted_set:
                     # This extracted piece corresponds to this legal piece.
-                    piece_pos = self.piece_to_vector(piece)
-                    piece_orient = self.get_piece_orientation(piece, legal_c) - 1 # Subtract 1 to standardize
+                    piece_pos = CubeState.piece_to_vector(piece)
+                    piece_orient = CubeState.get_piece_orientation(piece, legal_c) - 1 # Subtract 1 to standardize
                     code = np.concat((piece_pos, np.array([piece_orient])))
                     codes.append(code)
                     break
         return codes
 
-    def piece_to_vector(self, piece):
+    @staticmethod
+    def piece_to_vector(piece):
         try:
             sticker_vectors = []
             for index in piece.indices:
@@ -274,7 +302,8 @@ class CubeState:
         except Exception as e:
             raise Exception(f"Could not convert piece to vector while encoding data! Do indices exist? Indices: {piece.indices}  Error: {str(e)}")
 
-    def get_piece_orientation(self, piece, reference):
+    @staticmethod
+    def get_piece_orientation(piece, reference):
         if piece.piece_type is None or piece.piece_type <= 0: raise Exception(f"Can't orient: Piece has a piece_type of {piece.piece_type}!")
         orient = 0
         while orient < piece.piece_type:
@@ -307,4 +336,4 @@ class CubeState:
 
 if __name__ == "__main__":
     state = CubeState()
-    print(state.get_deepcube_data())
+    print(CubeState.get_deepcube_data(state.flat_data, state.shaped_data))

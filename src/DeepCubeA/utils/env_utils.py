@@ -1,6 +1,6 @@
 import re
 import math
-from environments.environment_abstract import Environment
+from DeepCubeA.environments.environment_abstract import Environment
 
 
 def get_environment(env_name: str) -> Environment:
