@@ -88,7 +88,8 @@ class CubeState:
 
     @staticmethod
     def get_deepcube_data(flat_data, shaped_data):
-        print(flat_data)
+        #print(f"get_deepcube_data() flat input:")
+        #print(flat_data)
         # Extract Pieces from Shaped Data
         extractor = CubeExtractor()
         corners_ext, edges_ext, centers_ext = extractor.extract_pieces(shaped_data)
@@ -130,7 +131,7 @@ class CubeState:
             matching_dstickers = DEEPCUBE_PIECES_TO_STICKERS[pieces_type][legal_index]
             for s in range(piece.piece_type):
                 adjusted_index = (s + p_orient) % piece.piece_type
-                if p_orient == 2: print(adjusted_index)
+                #if p_orient == 2: print(adjusted_index)
                 flat_index = CubeState._shaped_index_to_flat(piece.indices[s])
                 dsticker_id = matching_dstickers[adjusted_index] if type(matching_dstickers) == list else matching_dstickers
                 final_stickers[flat_index] = dsticker_id

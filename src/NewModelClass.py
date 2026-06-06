@@ -4,10 +4,12 @@ from torch import nn
 device = "cuda" if torch.cuda.is_available() else torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 
 def X_transform(X):
-    return torch.tensor((X-3)/3)
+    #return torch.tensor((X-3)/3)
+    return X
 
 def Y_transform(y):
-    return torch.tensor(y+20/40)
+    #return torch.tensor(y+20/40)
+    return y
 
 
 class F2LValueNN(nn.Module):

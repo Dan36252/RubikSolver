@@ -4,7 +4,7 @@ import numpy as np
 from CubeState import CubeState, MOVE_SEQUENCE, SOLVED_STATE
 from NewModelClass import F2LValueNN, EncodedValueNN, X_transform, device
 
-def load_model(weights_path='EncodedValueWeights.pth'):
+def load_model(weights_path='EncodedF2LValueWeights.pth'):
     model = EncodedValueNN().to(device)
     model.load_state_dict(torch.load(weights_path, weights_only=True), strict=False)
     return model
@@ -18,8 +18,9 @@ class Model:
         self.model.eval()
         # cubestate = CubeState(state_list)
         #print(encoded_data)
-        x = np.array(encoded_data, dtype=np.float32)
+        x = torch.from_numpy(np.array(encoded_data, dtype=np.int8).astype(np.float32))
         x = X_transform(x)
+        #print(x)
         x = x.to(device)
         pred = self.model.forward(x)
         return pred

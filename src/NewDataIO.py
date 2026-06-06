@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import re, time
-from CubeState import MOVE_SEQUENCE
+from CubeState import MOVE_SEQUENCE, CubeState
 from pathlib import Path
 
 WHITE_CROSS_MASK = "- - - - 0 - - 0 - - - - - - - - - - - - - - 2 - - 2 - - 3 - 3 3 3 - 3 - - - - - 4 - - 4 - - - - - 5 - - 5 -"
@@ -25,7 +25,7 @@ def state_matches_mask(state, mask):
     # print(state)
     return True
 
-def read_cubestates_file(filepath, split_mask = "", skip_after_mask=False, device='cpu'):
+def read_cubestates_file(filepath, split_mask = "", skip_after_mask=False, encode=False, device='cpu'):
 
     with open(filepath, 'r') as file:
         lines = file.readlines()
@@ -51,6 +51,7 @@ def read_cubestates_file(filepath, split_mask = "", skip_after_mask=False, devic
                 else:
                     skip_check = True
                     skip_num += 1
+                    #print(states_list[len(states_list)-1])
                     # if skip_num % 100 == 0:
                     #     print(f"Solution Number {skip_num}")
                     #     print(states_list[len(states_list)-1])
@@ -67,14 +68,19 @@ def read_cubestates_file(filepath, split_mask = "", skip_after_mask=False, devic
                 str_arr = line.split()
                 for s in str_arr:
                     state.append(int(s))
-                states_list.append(state)
+                if encode:
+                    cubestate = CubeState(state)
+                    enc_data = cubestate.encoded_data
+                    states_list.append(enc_data)
+                else:
+                    states_list.append(state)
 
                 if skip_to_next_solve or skip_check:
                     skip_to_next_solve = False
                     skip_check = False
 
                 # Add the "Distance till solution" to labels
-                if line_i > 0 and state_matches_mask(states_list[len(states_list) - 1], split_mask):
+                if line_i > 0 and state_matches_mask(state, split_mask): # states_list[len(states_list) - 1]
                     # moves_list[len(moves_list) - 1] = "0"
                     # print(f"LSI = {lsi} -----------------------------------------------------------------")
                     tmi = len(states_list) - 1  # This Move Index (in moves_list, the one that is '#')
@@ -83,7 +89,8 @@ def read_cubestates_file(filepath, split_mask = "", skip_after_mask=False, devic
                     # time.sleep(0.1)
                     for i in range(num_moves):
                         # Add the # moves till solution to each move in the move_list up to this solution move
-                        moves_list.append(-int(num_moves - (i + 1)))
+                        moves_list.append(int(num_moves - (i + 1)))
+                        #print(moves_list[len(moves_list)-1])
 
                     if skip_after_mask:
                         skip_to_next_solve = True
@@ -175,13 +182,13 @@ def split_train_test(X_list, Y_list):
 
 def __load_data(device="cpu"):
     raw_dir_path = Path('RawData')
-    processed_dir_path = Path('NewProcessedData')
+    processed_dir_path = Path('EncodedF2LData')
     # raw_dir_path = Path('/content/drive/MyDrive/RubikSolver/src/RawData')
     # processed_dir_path = Path('/content/drive/MyDrive/RubikSolver/src/NewProcessedData')
 
-    X_train = np.empty((0, 54), dtype=np.int8)
+    X_train = np.empty((0, 104), dtype=np.int8)
     Y_train = np.empty((0,), dtype=np.int8)
-    X_test = np.empty((0, 54), dtype=np.int8)
+    X_test = np.empty((0, 104), dtype=np.int8)
     Y_test = np.empty((0,), dtype=np.int8)
 
     # For each raw data file, check if processed file exists.
@@ -201,10 +208,12 @@ def __load_data(device="cpu"):
                 loaded_processed = False
                 for processed_path in processed_dir_path.iterdir():
                     # Get processed file number
-                    file_num_p = re.search("[0-9]+", str(processed_path))
+                    path_split = str(processed_path).split("/")
+                    file_num_p = re.search("[0-9]+", path_split[len(path_split)-1])
                     if file_num_p is not None:
                         # If processed number exists, check if matches raw file number
-                        if file_num_r == file_num_p.group():
+                        file_num_p = file_num_p.group()
+                        if file_num_r == file_num_p:
                             # Processed data match found! Load processed data
                             loaded_X, loaded_Y = load_processed_data(str(processed_path), device)
                             X_train1, Y_train1, X_test1, Y_test1 = split_train_test(loaded_X, loaded_Y)
@@ -221,7 +230,7 @@ def __load_data(device="cpu"):
                     print(f"Could not find processed file {file_num_r}. Reading cubestate file.")
                     time.sleep(0.25)
                     # If no corresponding processed file was found, read and write
-                    loaded_X, loaded_Y = read_cubestates_file(str(raw_path), F2L_MASK, True, device)
+                    loaded_X, loaded_Y = read_cubestates_file(str(raw_path), F2L_MASK, True, True, device)
                     X_train1, Y_train1, X_test1, Y_test1 = split_train_test(loaded_X, loaded_Y)
                     # for i in range(500):
                     #     print(X_train1[i])

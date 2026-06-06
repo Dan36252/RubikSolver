@@ -1,6 +1,6 @@
 #from ClawMachine import ClawMachine
 #from ReadCube import CubeReader
-from CubeState import CubeState
+from CubeState import CubeState, MOVE_SEQUENCE
 from DeepCubeA.search_methods.astar import bwas_python, jetson_default_args
 from DeepCubeA.environments.cube3 import Cube3, Cube3State
 import numpy as np
@@ -26,6 +26,8 @@ print("Starting!")
 
 # Temporary state generation, until Cube Reader is made more accurate
 scramble = ["R", "U", "R'", "L", "D", "B2", "F'", "D'", "R2", "F", "B2", "L'"]
+#scramble = ["F", "R", "U", "R'", "U'", "F'"]
+#scramble = ["F", "R", "D"]
 state = CubeState(encode=False)
 for s in scramble:
     state.move(s)
@@ -33,7 +35,7 @@ flat_colors = state.flat_data
 
 # Preparing data for DeepCubeA
 cubestate = CubeState(data=flat_colors, encode=False)
-deep_cube_state = cubestate.get_deepcube_data()
+deep_cube_state = CubeState.get_deepcube_data(cubestate.flat_data, cubestate.shaped_data)
 
 print("\n\nDeep Cube colors data:")
 print(deep_cube_state)
@@ -41,4 +43,9 @@ print(deep_cube_state)
 
 print("\n\nSTARTING DEEPCUBE SOLUTION SEARCH!")
 env = Cube3(f2l_solution=True, encode_nn_input=True)
-bwas_python(jetson_default_args(), env, [Cube3State(np.array(deep_cube_state))], custom_hr=True)
+solns, paths, times, num_nodes_gen = bwas_python(jetson_default_args(), env, [Cube3State(np.array(deep_cube_state))], custom_hr=True)
+
+print("\nGOT SOLUTION!!!")
+moves = MOVE_SEQUENCE[1:-1]
+for s in solns[0]:
+    print(moves[s])

@@ -5,7 +5,7 @@ from random import randrange
 
 from DeepCubeA.utils.pytorch_models import ResnetModel
 from DeepCubeA.environments.environment_abstract import Environment, State
-from CubeState import CubeState
+from CubeState import CubeState, MOVE_SEQUENCE
 from NewModelClass import EncodedValueNN
 
 class Cube3State(State):
@@ -105,7 +105,7 @@ class Cube3(Environment):
 
     def get_nnet_model(self) -> nn.Module:
         if self.encode_nn_input:
-
+            raise Error(f"Cannot load the Cube3 nnet! Encoding = True. Make sure AStar was started with custom_hr=True.")
         else:
             state_dim: int = (self.cube_len ** 2) * 6
             nnet = ResnetModel(state_dim, 6, 5000, 1000, 4, 1, True)
@@ -145,8 +145,30 @@ class Cube3(Environment):
 
         return states, scramble_nums.tolist()
 
+    def expand_custom(self, states):
+        expanded_by_state = []
+        moves = MOVE_SEQUENCE[1:-1]
+        for root_state in states:
+            expanded = []
+            root_c = CubeState(root_state.colors, encode=False)
+            for m in moves:
+                next_state = root_c.spawn_move(m)
+                next_deepcube = np.array(CubeState.get_deepcube_data(next_state.flat_data, next_state.shaped_data))
+                #print("-_-_-_-")
+                #print(next_deepcube)
+                expanded.append(Cube3State(next_deepcube))
+            expanded_by_state.append(expanded)
+
+        tcs = []
+        for r in states:
+            tcs.append(np.ones((len(moves))))
+
+        return expanded_by_state, tcs
+
     def expand(self, states: List[State]) -> Tuple[List[List[State]], List[np.ndarray]]:
         assert self.fixed_actions, "Environments without fixed actions must implement their own method"
+
+        if self.encode_nn_input: return self.expand_custom(states)
 
         # initialize
         num_states: int = len(states)
@@ -180,14 +202,27 @@ class Cube3(Environment):
         return states_exp, tc_l
 
     def _move_np(self, states_np: np.ndarray, action: int):
-        action_str: str = self.moves[action]
+        if self.encode_nn_input:
+            move = MOVE_SEQUENCE[1:-1][action]
 
-        states_next_np: np.ndarray = states_np.copy()
-        states_next_np[:, self.rotate_idxs_new[action_str]] = states_np[:, self.rotate_idxs_old[action_str]]
+            next_states = []
+            for state in states_np:
+                cubestate = CubeState(state)
+                next_state = cubestate.spawn_move(move)
+                next_states.append(CubeState.get_deepcube_data(next_state.flat_data, next_state.shaped_data))
 
-        transition_costs: List[float] = [1.0 for _ in range(states_np.shape[0])]
+            transition_costs: List[float] = [1.0 for _ in range(states_np.shape[0])]
 
-        return states_next_np, transition_costs
+            return np.array(next_states), transition_costs
+        else:
+            action_str: str = self.moves[action]
+
+            states_next_np: np.ndarray = states_np.copy()
+            states_next_np[:, self.rotate_idxs_new[action_str]] = states_np[:, self.rotate_idxs_old[action_str]]
+
+            transition_costs: List[float] = [1.0 for _ in range(states_np.shape[0])]
+
+            return states_next_np, transition_costs
 
     def _get_adj(self) -> None:
         # WHITE:0, YELLOW:1, BLUE:2, GREEN:3, ORANGE: 4, RED: 5

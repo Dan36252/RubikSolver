@@ -18,16 +18,17 @@ from NewModelClass import EncodedValueNN, device, X_transform, Y_transform
 print("===================== Setting Up Data =====================")
 from NewDataIO import load_data_f2l
 from DataIO import load_data
+from NewDataIO import load_data_f2l
 
 print(f"Using {device} device")
 
-X_train, Y_train = load_data(processed_data_path="EncodedData", device=device, encode=True, output_type="dist", include_prev_moves_input=False)
-test_size = int(len(Y_train) * 0.01)
-X_test = X_train[-test_size:]
-Y_test = Y_train[-test_size:]
-X_train = X_train[:-test_size]
-Y_train = Y_train[:-test_size]
-
+#X_train, Y_train = load_data(processed_data_path="EncodedData", device=device, encode=True, output_type="dist", include_prev_moves_input=False)
+# test_size = int(len(Y_train) * 0.01)
+# X_test = X_train[-test_size:]
+# Y_test = Y_train[-test_size:]
+# X_train = X_train[:-test_size]
+# Y_train = Y_train[:-test_size]
+X_train, Y_train, X_test, Y_test = load_data_f2l()
 
 # print(f"Train States: {X_train.shape}")
 # print(f"Train Moves: {Y_train.shape}")

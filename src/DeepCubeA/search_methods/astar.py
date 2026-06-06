@@ -258,6 +258,7 @@ class AStar:
             self.instances.append(Instance(root_node))
 
     def step(self, heuristic_fn: Callable, batch_size: int, include_solved: bool = False, verbose: bool = False):
+        print("------ STEP -------")
         start_time_itr = time.time()
         instances: List[Instance]
         if include_solved:
@@ -404,11 +405,20 @@ def main():
 
 class jetson_default_args:
     def __init__(self):
-        self.model_dir = "DeepCubeA/saved_models/cube3/current/model_state_dict.pt"
-        self.nnet_batch_size = 10000
+        self.model_dir = "DeepCubeA/saved_models/cube3/current"
+        self.nnet_batch_size = 1000
         self.weight = 0.6
-        self.batch_size = 10000
+        self.batch_size = 1000
         self.verbose = True
+
+def get_custom_hr_fn(env, device):
+    model_runner = CustomHR()
+    def hr_fn(cubestates):
+        encoded_data = env.state_to_nnet_input(cubestates)
+        values = model_runner.get_state_value(encoded_data).detach().to(device).numpy().flatten()
+        #print(values[0])
+        return values
+    return hr_fn
 
 
 def bwas_python(args, env: Environment, states: List[State], custom_hr=False):
@@ -424,7 +434,7 @@ def bwas_python(args, env: Environment, states: List[State], custom_hr=False):
         heuristic_fn = nnet_utils.load_heuristic_fn(args.model_dir, device, on_gpu, env.get_nnet_model(),
                                                     env, clip_zero=True, batch_size=args.nnet_batch_size)
     else:
-        heuristic_fn = CustomHR().get_state_value
+        heuristic_fn = get_custom_hr_fn(env, device)
 
     solns: List[List[int]] = []
     paths: List[List[State]] = []
