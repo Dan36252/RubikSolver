@@ -118,19 +118,19 @@ class ClawMachine:
             # Hold cube tightly
             self.claws[face_move].twist(2, doOffset=False, slow=False)
             self.claws[opposite_face].twist(3, doOffset=False, slow=False)
-            time.sleep(0.7/self.robot_speed)
+            time.sleep(0.5)
             self.claws[adjacent_face1].extend(push=True)
             self.claws[adjacent_face2].extend(push=True)
-            time.sleep(1/self.robot_speed)
+            time.sleep(0.3)
             self.claws[face_move].extend(push=True)
             self.claws[opposite_face].extend(push=True)
-            time.sleep(1/self.robot_speed)
+            time.sleep(0.3)
             self.claws[adjacent_face1].retract()
             self.claws[adjacent_face2].retract()
 
             # Retract D
             self.claws["D"].retract()
-            time.sleep(0.7/self.robot_speed)
+            time.sleep(0.2)
 
             # if face_move == "L" or face_move == "R":
             #     self.claws["D"].twist(2, False)
@@ -153,7 +153,7 @@ class ClawMachine:
             self.claws["D"].extend(push=True)
             time.sleep(0.3)
             self.claws[ClawMachine.opposite_faces[vertical_claw]].retract()
-            time.sleep(0.3)
+            time.sleep(0.5)
 
         self.centered = False
 
