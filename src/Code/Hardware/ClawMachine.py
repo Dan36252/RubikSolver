@@ -2,13 +2,6 @@ from Code.Hardware.Claw import Claw
 import time, atexit
 
 class ClawMachine:
-
-    # Speed settings
-    robot_speed = 2.0   # Default is 1.0; higher values make robot faster; smaller values make it slower
-    fast_twist = True
-
-    # Debug settings
-    verbose = True
     
     adjacent_faces = {
         "L": "F",
@@ -26,6 +19,13 @@ class ClawMachine:
     }
     
     def __init__(self):
+        # Speed settings
+        self.robot_speed = 2.0  # Default is 1.0; higher values make robot faster; smaller values make it slower
+        self.fast_twist = True
+
+        # Debug settings
+        self.verbose = True
+
         # ADJUST
         self.claws = {
             "D" : Claw(6, 7, "D"),
@@ -52,25 +52,25 @@ class ClawMachine:
         time.sleep(1)
 
     def hold_cube(self, push=True):
-        if verbose: print("HOLD_CUBE()")
+        if self.verbose: print("HOLD_CUBE()")
         # Simple hold, only using L and R claws
         self.claws["L"].horizontal()
         self.claws["R"].vertical()
-        time.sleep(0.5/robot_speed)
+        time.sleep(0.5/self.robot_speed)
         self.claws["L"].extend(push=push)
         self.claws["R"].extend(push=push)
-        time.sleep(0.7/robot_speed)
+        time.sleep(0.7/self.robot_speed)
 
     def release_cube(self):
-        if verbose: print("RELEASE_CUBE()")
+        if self.verbose: print("RELEASE_CUBE()")
         # Simply release the hold_cube (only L and R claws)
         self.claws["L"].retract()
-        time.sleep(0.7/robot_speed)
+        time.sleep(0.7/self.robot_speed)
         self.claws["R"].retract()
-        time.sleep(0.7/robot_speed)
+        time.sleep(0.7/self.robot_speed)
 
     def turn_cube(self, face_move):
-        if verbose: print("TURN_CUBE()")
+        if self.verbose: print("TURN_CUBE()")
         # face_move = F, R, L, etc.
         # Turns the entire cube in the same direction as the given face turn.
         # Can only turn 90 degrees clockwise. Only give plain face codes, not moves (no ' or 2)
@@ -118,19 +118,19 @@ class ClawMachine:
             # Hold cube tightly
             self.claws[face_move].twist(2, doOffset=False, slow=False)
             self.claws[opposite_face].twist(3, doOffset=False, slow=False)
-            time.sleep(0.7/robot_speed)
+            time.sleep(0.7/self.robot_speed)
             self.claws[adjacent_face1].extend(push=True)
             self.claws[adjacent_face2].extend(push=True)
-            time.sleep(1/robot_speed)
+            time.sleep(1/self.robot_speed)
             self.claws[face_move].extend(push=True)
             self.claws[opposite_face].extend(push=True)
-            time.sleep(1/robot_speed)
+            time.sleep(1/self.robot_speed)
             self.claws[adjacent_face1].retract()
             self.claws[adjacent_face2].retract()
 
             # Retract D
             self.claws["D"].retract()
-            time.sleep(0.7/robot_speed)
+            time.sleep(0.7/self.robot_speed)
 
             # if face_move == "L" or face_move == "R":
             #     self.claws["D"].twist(2, False)
@@ -159,7 +159,7 @@ class ClawMachine:
         # time.sleep(0.2)
 
     def default_position(self):
-        if verbose: print("DEFAULT_POSITION()")
+        if self.verbose: print("DEFAULT_POSITION()")
         self.claws["D"].extend()
         self.claws["L"].retract()
         self.claws["R"].retract()
@@ -170,7 +170,7 @@ class ClawMachine:
         self.claws["D"].twist(2, doOffset=False, slow=False)
 
     def default_claws(self):
-        if verbose: print("DEFAULT_CLAWS()")
+        if self.verbose: print("DEFAULT_CLAWS()")
         #self.claws["D"].twist(2, doOffset=False, slow=False)
         self.claws["L"].twist(2, doOffset=False, slow=False)
         self.claws["F"].twist(2, doOffset=False, slow=False)
@@ -178,14 +178,14 @@ class ClawMachine:
         self.claws["B"].twist(2, doOffset=False, slow=False)
 
     def vertical_claws(self):
-        if verbose: print("VERTICAL_CLAWS()")
+        if self.verbose: print("VERTICAL_CLAWS()")
         self.claws["L"].vertical()
         self.claws["F"].vertical()
         self.claws["R"].vertical()
         self.claws["B"].vertical()
 
     def turn_face(self, face, move_type):
-        if verbose: print("TURN_FACE()")
+        if self.verbose: print("TURN_FACE()")
         # face = F, R, B, U, etc. (string)
         # move_type = "", "'", or "2" (string)
 
@@ -197,13 +197,13 @@ class ClawMachine:
 
         # If face == "U" or "D", simply turn_cube, turn_face(F), and turn_cube back.
         if face == "U":
-            if verbose: print("FACE == U")
+            if self.verbose: print("FACE == U")
             self.turn_cube("L")
             self.turn_face("F", move_type)
             self.turn_cube("R")
             return
         elif face == "D":
-            if verbose: print("FACE == D")
+            if self.verbose: print("FACE == D")
             self.turn_cube("R")
             self.turn_face("F", move_type)
             self.turn_cube("L")
@@ -232,10 +232,10 @@ class ClawMachine:
         # Hold cube and prepare claws
         self.claws[adjacent_face1].extend(push=True)
         self.claws[adjacent_face2].extend(push=True)
-        time.sleep(0.7/robot_speed)
+        time.sleep(0.7/self.robot_speed)
         self.claws[face].extend(push=True)
         self.claws[opposite_face].extend(push=True)
-        time.sleep(0.7/robot_speed)
+        time.sleep(0.7/self.robot_speed)
         #self.claws[adjacent_face2].extend(push=False) # ?
         self.claws[face].extend(push=False)
 
@@ -245,22 +245,22 @@ class ClawMachine:
 
         # Then rotate the face.
         if move_type == "":
-            self.claws[face].twist(2, slow=(not fast_twist))
+            self.claws[face].twist(2, slow=(not self.fast_twist))
         elif move_type == "'":
-            self.claws[face].twist(2, slow=(not fast_twist))
+            self.claws[face].twist(2, slow=(not self.fast_twist))
         elif move_type == "2":
-            self.claws[face].twist(2, slow=(not fast_twist))
+            self.claws[face].twist(2, slow=(not self.fast_twist))
             self.claws[face].retract()
             time.sleep(0.2)
             self.claws[face].twist(1, slow=False)
             time.sleep(0.3)
             self.claws[face].extend(push=False)
             time.sleep(0.3)
-            self.claws[face].twist(2, slow=(not fast_twist))
+            self.claws[face].twist(2, slow=(not self.fast_twist))
         else:
             print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
 
-        time.sleep(0.5/robot_speed)
+        time.sleep(0.5/self.robot_speed)
 
         # Hold cube gently
         self.claws[face].extend(push=False)
