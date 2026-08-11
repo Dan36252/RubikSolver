@@ -21,7 +21,7 @@ class ClawMachine:
     def __init__(self):
         # Speed settings
         self.robot_speed = 2.0  # Default is 1.0; higher values make robot faster; smaller values make it slower
-        self.fast_twist = True
+        self.fast_twist = False
 
         # Debug settings
         self.verbose = True
@@ -118,7 +118,7 @@ class ClawMachine:
             # Hold cube tightly
             self.claws[face_move].twist(2, doOffset=False, slow=False)
             self.claws[opposite_face].twist(3, doOffset=False, slow=False)
-            time.sleep(0.5)
+            time.sleep(0.3)
             self.claws[adjacent_face1].extend(push=True)
             self.claws[adjacent_face2].extend(push=True)
             time.sleep(0.3)
@@ -141,7 +141,7 @@ class ClawMachine:
             # Turn Cube
             self.claws[face_move].clockwise_90(offset=2, slow=False)
             self.claws[opposite_face].anti_clockwise_90(offset=2, slow=False)
-            time.sleep(0.5)
+            time.sleep(0.4)
 
             # Release
             vertical_claw = opposite_face if Claw.horizontal_positions[face_move] == 1 else face_move
@@ -151,9 +151,9 @@ class ClawMachine:
             self.claws[vertical_claw].retract()
             time.sleep(0.2)
             self.claws["D"].extend(push=True)
-            time.sleep(0.3)
+            time.sleep(0.1)
             self.claws[ClawMachine.opposite_faces[vertical_claw]].retract()
-            time.sleep(0.5)
+            time.sleep(0.3)
 
         self.centered = False
 
@@ -198,13 +198,11 @@ class ClawMachine:
 
         # If face == "U" or "D", simply turn_cube, turn_face(F), and turn_cube back.
         if face == "U":
-            if self.verbose: print("FACE == U")
             self.turn_cube("L")
             self.turn_face("F", move_type)
             self.turn_cube("R")
             return
         elif face == "D":
-            if self.verbose: print("FACE == D")
             self.turn_cube("R")
             self.turn_face("F", move_type)
             self.turn_cube("L")
@@ -228,15 +226,15 @@ class ClawMachine:
         else:
             print(f"WARNING: Unexpected move_type in turn_face()! ({move_type})")
 
-        time.sleep(0.2)
+        time.sleep(0.3)
 
         # Hold cube and prepare claws
         self.claws[adjacent_face1].extend(push=True)
         self.claws[adjacent_face2].extend(push=True)
-        time.sleep(0.7/self.robot_speed)
+        time.sleep(0.3)
         self.claws[face].extend(push=True)
         self.claws[opposite_face].extend(push=True)
-        time.sleep(0.7/self.robot_speed)
+        time.sleep(0.3)
         #self.claws[adjacent_face2].extend(push=False) # ?
         self.claws[face].extend(push=False)
 
@@ -260,8 +258,6 @@ class ClawMachine:
             self.claws[face].twist(2, slow=(not self.fast_twist))
         else:
             print(f"WARNING: Unexpected move_type for turn_face()! ({move_type})")
-
-        time.sleep(0.5/self.robot_speed)
 
         # Hold cube gently
         self.claws[face].extend(push=False)
