@@ -1,14 +1,14 @@
 from sys import hash_info
 
-from Camera import Camera  # UNCOMMENT THIS
+from Code.Hardware.Camera import Camera  # UNCOMMENT THIS
 from PIL import Image
-from CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState
+from Code.Data.CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState
 import time, cv2, random
 import numpy as np
-from VisionRunner import Model # UNCOMMENT THIS
-from VisionPiece import Piece
-from RubikTestProbabilities import TestProbabilities
-from CubeExtractor import CubeExtractor
+from Code.Vision.VisionRunner import Model # UNCOMMENT THIS
+from Code.Data.VisionPiece import Piece
+from Code.Tests.RubikTestProbabilities import TestProbabilities
+from Code.Data.CubeExtractor import CubeExtractor
 
 # TESTING 123
 # This is the new Cursor Assisted branch
@@ -38,10 +38,10 @@ class CubeReader:
                 if record_data:
                     #img_to_write = cropped_img.astype(np.uint8, copy=True)
                     #img_to_write = cv2.cvtColor(img_to_write, cv2.COLOR_HSV2BGR)
-                    cv2.imwrite(f"src/UncroppedScans/img_{'0'*(4-len(str(optional_index)))}{optional_index}-{str(i)}.jpg", cropped_img)
+                    cv2.imwrite(f"src/Data/Generated/CollectedImages/img_{'0'*(4-len(str(optional_index)))}{optional_index}-{str(i)}.jpg", cropped_img)
 
                 # Run model, and store the color probabilities for each of the 9 stickers in the image.
-                color_probs.append(self.model.predict_probs(cropped_img))
+                if not record_data: color_probs.append(self.model.predict_probs(cropped_img))
 
             time.sleep(0.5)
 
@@ -53,11 +53,12 @@ class CubeReader:
         #   colors = correct_by_probabilities(colors, color_corrections, color_probs)  # For each item in color_corrections, ... (need create logic! both look at color to correct and all other colors from which to possibly take)
 
         print("Reconstructing cube...")
-        colors = self.get_cols_from_probs(color_probs) # A 6x9 list
+        colors = None
+        if not record_data: colors = self.get_cols_from_probs(color_probs) # A 6x9 list
         #col_corrections = self.get_col_corrections(colors) # A len 6 list. Its elements should add up to 0.
-        colors = self.correct_colors(colors, color_probs)
+        if not record_data: colors = self.correct_colors(colors, color_probs)
 
-        return colors
+        if not record_data: return colors
 
     def TestReadCube(self, test_probabilities):
         
@@ -388,7 +389,7 @@ class CubeReader:
 
     def append_current_face_labels(self, cubestate):
         faces_order = ['L', 'F', 'R', 'B', 'U', 'D']
-        with open("UncroppedLabels.txt", 'a') as file:
+        with open("src/Data/Generated/CollectedLabels.txt", 'a') as file:
             for i in range(len(faces_order)):
                 face_to_write = faces_order[i]
                 cubestate_face_index = FACE_SEQUENCE.index(face_to_write)

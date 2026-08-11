@@ -50,7 +50,7 @@ class Camera:
         cap = cv2.VideoCapture(self.gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
         # Let auto-exposure settle
-        for _ in range(120):
+        for _ in range(60):
             cap.read()
 
         ret, frame = cap.read()

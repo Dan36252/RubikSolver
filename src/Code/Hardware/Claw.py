@@ -104,7 +104,7 @@ class Claw:
 
     def stepSlowly(self, end_angle):
         # HELPER METHOD for set_angle()
-        DEGREES_PER_SEC = 120.0  # For the slow=True option
+        DEGREES_PER_SEC = 150.0  # For the slow=True option
         STEPS_PER_SEC = 100.0
 
         start_angle = self.angle
@@ -132,4 +132,4 @@ class Claw:
         self.set_angle(min(180, self.angle + 90), offset, slow)
 
     def anti_clockwise_90(self, offset=20, slow=True):
-        self.set_angle(min(180, self.angle - 90), offset, slow)
+        self.set_angle(min(180, self.angle - 90), offset, slow) # TODO: Incorrect clamp?
