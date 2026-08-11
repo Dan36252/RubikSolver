@@ -51,7 +51,7 @@ def two_channel_hsv_to_norm(arr):
 
 
 # Primary Data Loading Method
-def load_data(im_width=24, im_height=24, images_path="ALLFaceData", labels_path="ALLFaceDataLabels.txt", hsv=False):
+def load_data(im_width=24, im_height=24, images_path="Data/Vision/ALLFaceData", labels_path="Data/Vision/ALLFaceDataLabels.txt", hsv=False):
     # First read existing labeled data and get the rotated versions of that data
     X_train, Y_train, X_test, Y_test = get_data(im_width, im_height, images_path, labels_path, hsv)
     # print(f"Data length: X - {len(X)}, y - {len(y)}")
@@ -141,7 +141,7 @@ def generate_light_variations(imgs_list, n=7, hsv=True):
     return output
 
 
-def get_data(im_width=24, im_height=24, images_path="ALLFaceData", labels_path="ALLFaceDataLabels.txt", hsv=True):
+def get_data(im_width=24, im_height=24, images_path="Data/Vision/ALLFaceData", labels_path="Data/Vision/ALLFaceDataLabels.txt", hsv=True):
     X_train = []
     Y_train = []
     X_test = []

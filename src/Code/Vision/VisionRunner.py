@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 import cv2
-from VisionModelClass import VisionCNN, OldVisionNN, device, X_transform, Y_transform, IMG_WIDTH, IMG_HEIGHT
-from VisionDataIO import reshape_channels_first
+from Code.Vision.VisionModelClass import VisionCNN, OldVisionNN, device, X_transform, Y_transform, IMG_WIDTH, IMG_HEIGHT
+from Code.Data.VisionDataIO import reshape_channels_first
 from numpy.ma.core import reshape
 
 
