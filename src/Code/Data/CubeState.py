@@ -279,7 +279,7 @@ class CubeState:
                     # This extracted piece corresponds to this legal piece.
                     piece_pos = CubeState.piece_to_vector(piece)
                     piece_orient = CubeState.get_piece_orientation(piece, legal_c) - 1 # Subtract 1 to standardize
-                    code = np.concat((piece_pos, np.array([piece_orient])))
+                    code = np.concatenate((piece_pos, np.array([piece_orient])))
                     codes.append(code)
                     break
         return codes
