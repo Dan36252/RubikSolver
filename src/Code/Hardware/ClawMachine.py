@@ -153,6 +153,7 @@ class ClawMachine:
             self.claws["D"].extend(push=True)
             time.sleep(0.3)
             self.claws[ClawMachine.opposite_faces[vertical_claw]].retract()
+            time.sleep(0.3)
 
             self.centered = False
 
