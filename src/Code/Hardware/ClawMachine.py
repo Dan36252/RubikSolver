@@ -70,7 +70,7 @@ class ClawMachine:
         time.sleep(0.7/self.robot_speed)
 
     def turn_cube(self, face_move):
-        if self.verbose: print("TURN_CUBE()")
+        if self.verbose: print(f"TURN_CUBE('{face_move}')")
         # face_move = F, R, L, etc.
         # Turns the entire cube in the same direction as the given face turn.
         # Can only turn 90 degrees clockwise. Only give plain face codes, not moves (no ' or 2)
@@ -155,7 +155,7 @@ class ClawMachine:
             self.claws[ClawMachine.opposite_faces[vertical_claw]].retract()
             time.sleep(0.3)
 
-            self.centered = False
+        self.centered = False
 
         # time.sleep(0.2)
 
@@ -186,7 +186,7 @@ class ClawMachine:
         self.claws["B"].vertical()
 
     def turn_face(self, face, move_type):
-        if self.verbose: print("TURN_FACE()")
+        if self.verbose: print(f"TURN_FACE('{face}{move_type}')")
         # face = F, R, B, U, etc. (string)
         # move_type = "", "'", or "2" (string)
 
