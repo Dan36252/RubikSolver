@@ -375,7 +375,7 @@ class CubeReader:
         else:
             cube = start_state
 
-        for i in range(200):
+        for i in range(1000):
             self.append_current_face_labels(cube)
             self.ReadCube(record_data=True, optional_index=(i+start_index))
             moves = self.get_n_rand_moves(4)

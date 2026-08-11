@@ -283,6 +283,7 @@ class ClawMachine:
         self.centered = False
 
     def center_cube(self, d_pos=2):
+        if self.verbose: print("CENTER_CUBE()")
         if self.centered: return
         self.default_position()
         self.default_claws()
