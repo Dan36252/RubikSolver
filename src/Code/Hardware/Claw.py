@@ -1,6 +1,6 @@
 import time, math
 from adafruit_motor import servo
-from PCABoard import PCABoard
+from Code.Hardware.PCABoard import PCABoard
 
 class Claw:
     # Angles corresponding to the extended state of each claw.
