@@ -302,6 +302,7 @@ class ClawMachine:
         time.sleep(0.2)
 
         self.default_position()
+        time.sleep(0.3)
         self.centered = True
         
     def face_to_cam(self, face_num):
