@@ -5,7 +5,7 @@ from PIL import Image
 from Code.Data.CubeState import COLOR_SEQUENCE, FACE_SEQUENCE, LEGAL_PIECES, CubeState
 import time, cv2, random
 import numpy as np
-from Code.Vision.VisionRunner import Model # UNCOMMENT THIS
+#from Code.Vision.VisionRunner import Model # UNCOMMENT THIS
 from Code.Data.VisionPiece import Piece
 from Code.Tests.RubikTestProbabilities import TestProbabilities
 from Code.Data.CubeExtractor import CubeExtractor
@@ -17,7 +17,7 @@ class CubeReader:
 
     def __init__(self, claw_machine):
         self.claw_machine = claw_machine
-        self.model = Model()
+        #self.model = Model()
 
     # Procedure:
     # Simply have camera read every face (order doesn't matter) using computer vision.
