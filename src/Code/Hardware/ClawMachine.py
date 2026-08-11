@@ -282,7 +282,7 @@ class ClawMachine:
         self.centered = False
 
     def center_cube(self, d_pos=2):
-        if centered: return
+        if self.centered: return
         self.default_position()
         self.default_claws()
         time.sleep(0.2)

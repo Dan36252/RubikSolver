@@ -48,7 +48,7 @@ class Claw:
 
         self.face = face
 
-        time.sleep(0.5)
+        #time.sleep(0.5)
 
     def retract(self):
         self.extendor.angle = 160
