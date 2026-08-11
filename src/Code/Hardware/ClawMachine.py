@@ -1,4 +1,4 @@
-from Claw import Claw
+from Code.Hardware.Claw import Claw
 import time, atexit
 
 class ClawMachine:
