@@ -55,17 +55,15 @@ class CubeState:
     # - Output Data (54x1)
     # - Output Previous Moves ((30*3)x1)
 
-    def __init__(self, data=SOLVED_STATE, encode=True, prev_state=None, prev_move=None, g_cost=0):
+    def __init__(self, data=SOLVED_STATE, encode=True, f2l_only=False):
         # data: a list of length 54, representing a cube state (following rules above)
         self.encode = encode
-        self.prev_state = prev_state
-        self.prev_move = prev_move
-        self.g_cost = g_cost
-        self.total_cost = 1e10
+        self.f2l_only = f2l_only
 
         is_data_deepcube = CubeState.is_data_deepcube(data)
         self.flat_data = data if not is_data_deepcube else CubeState.deepcube_to_flat(data)
         self.shaped_data = CubeState.shape_data(self.flat_data)
+        if self.f2l_only: self.flat_data, self.shaped_data = CubeState.mask_data_f2l(self.shaped_data)
         if encode: self.encoded_data = CubeState.encode_data(self.shaped_data)
         #if encode: print(self.encoded_data)
 
@@ -85,6 +83,31 @@ class CubeState:
             return None
         else:
             return self.encoded_data
+
+    @staticmethod
+    def mask_data_f2l(shaped_data):
+        # Extract pieces
+        extractor = CubeExtractor()
+        corners, edges, centers = extractor.extract_pieces(shaped_data)
+
+        # Find pieces that contain yellow stickers
+        yellow_pieces = []
+        for piece in (corners + edges + centers):
+            for c in piece.colors:
+                if c == 1:
+                    yellow_pieces.append(piece)
+                    break
+
+        # Set colors at those indices to -1
+        for piece in yellow_pieces:
+            indices = piece.indices if type(piece.indices[0])==list else [piece.indices]
+            for index in indices:
+                shaped_data[index[0]][index[1]] = -1
+
+        # Convert to flat data
+        flat_data = CubeState.flatten_data(shaped_data)
+
+        return flat_data, shaped_data
 
     @staticmethod
     def get_deepcube_data(flat_data, shaped_data):
@@ -256,6 +279,7 @@ class CubeState:
     sticker_vectors = [[-1, 1], [0, 1], [1, 1], [-1, 0], [0, 0], [1, 0], [-1, -1], [0, -1], [1, -1]]
     face_x_dirs = [[0,0,1], [1,0,0], [1,0,0], [1,0,0], [0,0,-1], [-1,0,0]]
     face_y_dirs = [[0,1,0], [0,0,-1], [0,1,0], [0,0,1], [0,1,0], [0,1,0]]
+    color_priorities = [3, 1, 2, 5, 0, 4]
 
     @staticmethod
     def get_matching_legal_piece(vision_piece, legal_pieces):
@@ -278,7 +302,7 @@ class CubeState:
                 if legal_set == extracted_set:
                     # This extracted piece corresponds to this legal piece.
                     piece_pos = CubeState.piece_to_vector(piece)
-                    piece_orient = CubeState.get_piece_orientation(piece, legal_c) - 1 # Subtract 1 to standardize
+                    piece_orient = CubeState.get_piece_orientation(piece) - 1 # Subtract 1 to standardize
                     code = np.concatenate((piece_pos, np.array([piece_orient])))
                     codes.append(code)
                     break
@@ -287,42 +311,32 @@ class CubeState:
     @staticmethod
     def piece_to_vector(piece):
         try:
-            sticker_vectors = []
-            for index in piece.indices:
-                face_vector = np.array(CubeState.face_vectors[index[0]]) * 1.5
-                sticker_x_comp = np.array(CubeState.face_x_dirs[index[0]]) * CubeState.sticker_vectors[index[1]][0]
-                sticker_y_comp = np.array(CubeState.face_y_dirs[index[0]]) * CubeState.sticker_vectors[index[1]][1]
-                sticker_vector = sticker_x_comp + sticker_y_comp + face_vector
-                sticker_vectors.append(sticker_vector)
-            piece_vector = np.zeros(len(sticker_vectors[0]))
-            for i in range(len(sticker_vectors)):
-                piece_vector = piece_vector + sticker_vectors[i]
-            piece_vector = piece_vector / len(sticker_vectors)
+            index = piece.indices[0]
+            face_vector = np.array(CubeState.face_vectors[index[0]]) * 1
+            sticker_x_comp = np.array(CubeState.face_x_dirs[index[0]]) * CubeState.sticker_vectors[index[1]][0]
+            sticker_y_comp = np.array(CubeState.face_y_dirs[index[0]]) * CubeState.sticker_vectors[index[1]][1]
+            piece_vector = sticker_x_comp + sticker_y_comp + face_vector
             return piece_vector
 
         except Exception as e:
             raise Exception(f"Could not convert piece to vector while encoding data! Do indices exist? Indices: {piece.indices}  Error: {str(e)}")
 
     @staticmethod
-    def get_piece_orientation(piece, reference):
-        if piece.piece_type is None or piece.piece_type <= 0: raise Exception(f"Can't orient: Piece has a piece_type of {piece.piece_type}!")
-        orient = 0
-        while orient < piece.piece_type:
-            matches = True
-            for i in range(piece.piece_type):
-                reference_color = reference[(i + orient) % piece.piece_type] if type(reference) == list else reference
-                piece_color = piece.colors[i]
-                #reference_color = reference[i] if type(reference) == list else reference
-                if piece_color != reference_color:
-                    matches = False
-                    break
-            if matches: return orient
+    def get_piece_orientation(piece):
+        # Get primary color in this piece
+        reference_color = 0
+        colors = set(piece.colors)
+        found_primary = False
+        for r in CubeState.color_priorities:
+            if r in colors:
+                reference_color = r
+                found_primary = True
+                break
+        if not found_primary: raise Exception(f"Could not find orientation of piece {piece.colors}. No primary color found!")
 
-            orient = orient + 1
-
-        raise Exception(f"Could not orient piece: no matching orientations! Piece: {piece.colors}, Reference: {reference}")
-
-
+        # Get piece orientation
+        orientation = piece.colors.index(reference_color)
+        return orientation
 
     def __repr__(self):
         # str = "Cube:\n"
