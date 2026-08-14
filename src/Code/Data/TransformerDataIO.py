@@ -56,6 +56,7 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, tr
         progress_counter = 0
         s1, s2 = 0, 0  # pointers to track boundaries of solution sets
         track_solutions = split_solutions or not (truncate_mask is None)
+        longest_solution = 0
         for i in range(0, len(lines), 2):
             # Get current (state, move) pair
             state = lines[i].strip().split()
@@ -98,6 +99,9 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, tr
                     # Remember the index of the first (state, move) pair of the next solution
                     s1 = s2+1
 
+                    # Update longest solution length
+                    if len(solution_states) > longest_solution: longest_solution = len(solution_states)
+
             # Log progress
             progress_counter += 1
             if progress_counter >= 10000:
@@ -135,27 +139,76 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, tr
             else:
                 output_states, output_moves = chop_data(output_states, output_moves)
 
-        # Helper method for processing cube states
+        # Recursive helper method for processing cube states
         def process_states(states_list, moves_list):
             if type(states_list[0][0]) != int and type(states_list[0][0]) != float:
                 for i in range(states_list):
                     process_states(states_list[i], moves_list[i])
             else:
                 for i in range(states_list):
-                    # get one-hot vector for prev move, or zero vector if i==0
-                    # encode cubestate if needed
-                    # concat and replace state in states_list[i] with result
+                    # UPDATE MOVES LIST:
+                    # Turn move codes into one-hot vectors
+                    move = [0]*len(MOVE_SEQUENCE)
+                    move[moves_list[i]] = 1
+                    moves_list[i] = move
 
-        # Final processing of data: encoding, concatenating prev move, and filling jagged space with placeholder data
-        print("Final data processing... (encoding, concatenating prev move, filling jagged space)")
+                    # UPDATE STATES LIST:
+                    # Get one-hot vector for prev move, or zero vector if i==0
+                    prev_move_list = []
+                    if include_prev_move:
+                        prev_move_list = [0]*len(MOVE_SEQUENCE)
+                        prev_move = 0 if i == 0 else MOVE_SEQUENCE.index(moves_list[i])
+                        prev_move_list[prev_move] = 1
 
+                    # Encode cubestate if needed
+                    state = states_list[i]
+                    if encode_states or f2l_only:
+                        cube_state = CubeState(data=states_list[i], encode=encode_states, f2l_only=f2l_only)
+                        state = cube_state.encoded_data if encode_states else cube_state.flat_data
 
-        print(np.array(states).shape)
-        print(np.array(moves).shape)
+                    # Concat and replace state in states_list[i] with result
+                    if include_prev_move: state = state + prev_move_list
+
+                    # Finally, update the states_list with the new cube state vector
+                    states_list[i] = state
+
+        # Processing of data: encoding, concatenating prev move, and filling jagged space with placeholder data
+        print("Data processing... (encoding, concatenating prev move, filling jagged space)")
+        if encode_states or f2l_only or include_prev_move:
+            process_states(output_states, output_moves)
+
+        # Recursive helper method for removing jagged edges
+        def remove_jagged(states_list, moves_list):
+            if type(states_list[0][0]) != int and type(states_list[0][0]) != float:
+                for i in range(len(states_list)):
+                    remove_jagged(states_list[i], moves_list[i])
+            else:
+                lacking = longest_solution - len(states_list)
+                states_dimension = len(states_list[0])
+                moves_dimension = len(moves_list[0])
+                for i in range(lacking):
+                    states_list.append([0]*states_dimension)
+                    moves_list.append([0]*moves_dimension)
+
+        # Removal of jagged array ends
+        print("Removing jagged array ends...")
+        if remove_jagged and split_solutions:
+            remove_jagged(output_states, output_moves)
+
+        # Finally, convert result into numpy array if possible
+        print("Converting to numpy arrays...")
+        if remove_jagged or (not split_solutions and chop_mask is None):
+            output_states = np.array(output_states, dtype=np.int8)
+            output_moves = np.array(output_moves, dtype=np.int8)
+
+        print("Done!!!")
+        return output_states, output_moves
 
 
 def load_f2l_solver_data():
-    extract_from_raw_data("Data/Solver/RawData/training.seq.0.txt")
+    states, moves = extract_from_raw_data("Data/Solver/RawData/training.seq.0.txt")
+    print(states.shape)
+    print(moves.shape)
     print("IMPLEMENT: f2l solver data")
 
 def load_last_layer_solver_data():
