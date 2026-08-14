@@ -1,5 +1,5 @@
 from Code.Data.CubeState import CubeState
+from Code.Data.TransformerDataIO import load_f2l_solver_data
 import random
 
-cube = CubeState()
-print(cube.encoded_data)
+load_f2l_solver_data()
