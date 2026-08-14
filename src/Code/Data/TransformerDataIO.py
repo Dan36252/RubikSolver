@@ -28,7 +28,7 @@ def state_matches_mask(state, mask):
     return True
 
 # This method reads a raw data file (in Data/Solver/RawData) and returns two ndarrays of custom processed data: states and moves.
-def extract_from_raw_data(filepath, split_solutions=True, truncate_mask=None, truncate_dir="after", include_truncate_pos=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=False, include_prev_move=True):
+def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, truncate_mask=None, truncate_dir="after", include_truncate_pos=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=False, include_prev_move=True):
     # filepath - Path to the raw data file to be read
     # split_solutions - If True, the output ndarray's first dimension will correspond to distinct cube solutions in the data.
     #                   If False, the output ndarray's first dimension will correspond to cube states from all solutions in the file.
@@ -106,15 +106,49 @@ def extract_from_raw_data(filepath, split_solutions=True, truncate_mask=None, tr
 
         # Helper method for the secondary data chopping
         def chop_data(states_list, moves_list):
-            output_states, output_moves = [], []
+            chopped_states, chopped_moves = [], []
             c1, c2 = 0, 0
-            for i in range(len(states_list)):
-
+            total_len = len(states_list)
+            for i in range(total_len):
+                if i == total_len:
+                    c2 = total_len+1
+                    chopped_states.append(states_list[c1:c2])
+                    chopped_moves.append(moves_list[c1:c2])
+                elif state_matches_mask(states_list[i], chop_mask):
+                    if i == 0:
+                        c1 = i if include_chop_pos == "first" else i+1
+                    else:
+                        c2 = i+1 if include_chop_pos == "last" else i
+                        chopped_states.append(states_list[c1:c2])
+                        chopped_moves.append(moves_list[c1:c2])
+                        c1 = i+1 if not include_chop_pos == "first" else i
+            return chopped_states, chopped_moves
 
         # Complete secondary data dicing: chop data. Further group data if chop_mask != None.
         print("Secondary data chopping...")
         if not (chop_mask is None):
-            for
+            if split_solutions:
+                for i in range(len(output_states)):
+                    solution_states = output_states[i]
+                    solution_moves = output_moves[i]
+                    output_states[i], output_moves[i] = chop_data(solution_states, solution_moves)
+            else:
+                output_states, output_moves = chop_data(output_states, output_moves)
+
+        # Helper method for processing cube states
+        def process_states(states_list, moves_list):
+            if type(states_list[0][0]) != int and type(states_list[0][0]) != float:
+                for i in range(states_list):
+                    process_states(states_list[i], moves_list[i])
+            else:
+                for i in range(states_list):
+                    # get one-hot vector for prev move, or zero vector if i==0
+                    # encode cubestate if needed
+                    # concat and replace state in states_list[i] with result
+
+        # Final processing of data: encoding, concatenating prev move, and filling jagged space with placeholder data
+        print("Final data processing... (encoding, concatenating prev move, filling jagged space)")
+
 
         print(np.array(states).shape)
         print(np.array(moves).shape)
