@@ -1,8 +1,13 @@
 from Code.Data.CubeState import MOVE_SEQUENCE, CubeState
 import numpy as np
+import os
+import re
 
+raw_data_path = "Data/Solver/RawData"
 f2l_data_path = "Data/Solver/TransformerData/F2LSolver"
 last_layer_data_path = "Data/Solver/TransformerData/LastLayerSolver"
+
+F2L_LONGEST_SOLUTION = 73
 
 WHITE_CROSS_MASK = "- - - - 0 - - 0 - - - - - - - - - - - - - - 2 - - 2 - - 3 - 3 3 3 - 3 - - - - - 4 - - 4 - - - - - 5 - - 5 -"
 F2L_MASK = "- - - 0 0 0 0 0 0 - - - - - - - - - - - - 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 - - - 4 4 4 4 4 4 - - - 5 5 5 5 5 5"
@@ -28,7 +33,7 @@ def state_matches_mask(state, mask):
     return True
 
 # This method reads a raw data file (in Data/Solver/RawData) and returns two ndarrays of custom processed data: states and moves.
-def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, truncate_mask=None, truncate_dir="after", include_truncate_pos=True, last_move_is_solution=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=False, include_prev_move=True):
+def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, longest_solution=0, truncate_mask=None, truncate_dir="after", include_truncate_pos=True, last_move_is_solution=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=False, include_prev_move=True):
     # filepath - Path to the raw data file to be read
     # split_solutions - If True, the output ndarray's first dimension will correspond to distinct cube solutions in the data.
     #                   If False, the output ndarray's first dimension will correspond to cube states from all solutions in the file.
@@ -56,7 +61,6 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, tr
         progress_counter = 0
         s1, s2 = 0, 0  # pointers to track boundaries of solution sets
         track_solutions = split_solutions or not (truncate_mask is None)
-        longest_solution = 0
         for i in range(0, len(lines), 2):
             # Get current (state, move) pair
             state = lines[i].strip().split()
@@ -209,18 +213,63 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, tr
         return output_states, output_moves
 
 
+# Extracts the numeric identifier from a data file's name (e.g. "training.seq.99" -> 99).
+# Used to match a raw data file with its corresponding processed data file, since a plain
+# substring "contains" check would wrongly match "9" against "99".
+def get_file_number(filename):
+    match = re.search(r"\d+", filename)
+    return int(match.group()) if match else None
+
+
+# Writes a pair of processed (states, moves) tensors to a file in TransformerData/F2LSolver.
+# Rows are written solution-by-solution as alternating lines (state row, then move row),
+# dropping any row where both the state and move vectors are all-zero (the padding rows
+# added by extract_from_raw_data's remove_jagged step). Each solution is terminated by a
+# line containing a single dash, so the real (unpadded) length of each solution is preserved.
+def write_f2l_solver_data(filepath, states, moves):
+    with open(filepath, "w") as file:
+        for solution_states, solution_moves in zip(states, moves):
+            for state_row, move_row in zip(solution_states, solution_moves):
+                if not (np.any(state_row) or np.any(move_row)): continue
+                file.write(" ".join(str(int(x)) for x in state_row) + "\n")
+                file.write(" ".join(str(int(x)) for x in move_row) + "\n")
+            file.write("-\n")
+
+
+# Reads a processed data file from TransformerData/F2LSolver back into a pair of (states, moves)
+# tensors, reversing write_f2l_solver_data(). Solutions are split apart at each dash line rather
+# than relying on a fixed block size, then each solution is re-padded with all-zero vectors
+# (matching the dimension of its own real vectors) up to longest_solution steps.
+def read_f2l_solver_data(filepath, longest_solution=F2L_LONGEST_SOLUTION):
+    all_states, all_moves = [], []
+    current_states, current_moves = [], []
+    with open(filepath) as file:
+        for line in file:
+            line = line.strip()
+            if line == "-":
+                all_states.append(current_states)
+                all_moves.append(current_moves)
+                current_states, current_moves = [], []
+            elif len(current_states) == len(current_moves):
+                current_states.append([int(x) for x in line.split()])
+            else:
+                current_moves.append([int(x) for x in line.split()])
+
+    state_dim = len(all_states[0][0])
+    move_dim = len(all_moves[0][0])
+
+    states, moves = [], []
+    for solution_states, solution_moves in zip(all_states, all_moves):
+        padding = longest_solution - len(solution_states)
+        states.append(solution_states + [[0] * state_dim] * padding)
+        moves.append(solution_moves + [[0] * move_dim] * padding)
+
+    states = np.array(states, dtype=np.int8)
+    moves = np.array(moves, dtype=np.int8)
+    return states, moves
+
+
 def load_f2l_solver_data():
-    states, moves = extract_from_raw_data("Data/Solver/RawData/training.seq.1", split_solutions=True, remove_jagged=True, truncate_mask=F2L_MASK, truncate_dir="after", include_truncate_pos=True, last_move_is_solution=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=True, include_prev_move=True)
-    counter = 0
-    for i in range(len(states[0])):
-        counter += 1
-        print(states[0][i])
-        all_zeros = True
-        for j in range(len(states[0][i])):
-            if states[0][i][j] != 0: all_zeros = False
-        if all_zeros: break
-    print(counter)
-    print("IMPLEMENT: f2l solver data")
     # Longest solution (ONLY UP TO F2L): 71
     # training.seq.0: 67
     # training.seq.1: 66
@@ -236,6 +285,34 @@ def load_f2l_solver_data():
     # Longest solution (All moves):
     # training.seq.0: 81
     # training.seq.1: 82
+
+    raw_filenames = sorted(os.listdir(raw_data_path))
+    processed_filenames = os.listdir(f2l_data_path)
+
+    all_states, all_moves = [], []
+    for raw_filename in raw_filenames:
+        raw_number = get_file_number(raw_filename)
+
+        processed_filename = None
+        for candidate in processed_filenames:
+            if get_file_number(candidate) == raw_number:
+                processed_filename = candidate
+                break
+
+        if processed_filename is not None:
+            print(f"Found processed data for {raw_filename}, reading {processed_filename}...")
+            states, moves = read_f2l_solver_data(os.path.join(f2l_data_path, processed_filename), F2L_LONGEST_SOLUTION)
+        else:
+            print(f"No processed data found for {raw_filename}, extracting from raw data...")
+            states, moves = extract_from_raw_data(os.path.join(raw_data_path, raw_filename), split_solutions=True, remove_jagged=True, longest_solution=F2L_LONGEST_SOLUTION, truncate_mask=F2L_MASK, truncate_dir="after", include_truncate_pos=True, last_move_is_solution=True, chop_mask=None, include_chop_pos="first", encode_states=True, f2l_only=True, include_prev_move=True)
+            write_f2l_solver_data(os.path.join(f2l_data_path, f"f2l.{raw_number}.txt"), states, moves)
+
+        all_states.append(states)
+        all_moves.append(moves)
+
+    states = np.concatenate(all_states, axis=0)
+    moves = np.concatenate(all_moves, axis=0)
+    return states, moves
 
 
 
