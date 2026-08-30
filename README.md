@@ -8,13 +8,13 @@ The robot is intended to work like so:
 * The computer runs an ML model to obtain a set of moves
 * The robot performs those moves to solve the cube
 
-Progress timeline:<br><br>
-12/3/25 - Got idea to make AI Rubik's Cube robot <br>
-12/16/25 - Trained MCP solver model #1 (Accuracy: 60.3%, Solve Rate: 0.0%) <br>
-12/17/25 - Trained MCP solver model #2 (Accuracy: 83.0%, Solve Rate: 0.0%) <br>
-12/26/25 - Finished first robot prototype (CAD, 3D printing, connected servos to Jetson) <br>
-12/30/25 - Began manually collecting image data for CV model <br>
-1/4/26 - First automatic image data mass-collection for CV model <br>
+Progress timeline:
+* 12/3/25 - Got idea to make AI Rubik's Cube robot
+* 12/16/25 - Trained MCP solver model #1 (Accuracy: 60.3%, Solve Rate: 0.0%)
+* 12/17/25 - Trained MCP solver model #2 (Accuracy: 83.0%, Solve Rate: 0.0%)
+* 12/26/25 - Finished first robot prototype (CAD, 3D printing, connected servos to Jetson)
+* 12/30/25 - Began manually collecting image data for CV model
+* 1/4/26 - First automatic image data mass-collection for CV model
 * 1/6/26 - Trained MCP computer vision model (not accurate enough to reconstruct cube)
 * 2/27/26 - Trained CNN computer vision model (still not accurate enough)
 * 6/7/26 - Trained LSTM solver model #1 (Accuracy: 94.8%, Solve Rate: 2.0%)  YAY!
@@ -22,9 +22,9 @@ Progress timeline:<br><br>
 * 8/24/26 - Trained Transformer solver model #1 (Accuracy: 97.4%, Solve Rate: 0.0%)
 * (Still working on robot!)
 
-<br><br>
-## Building Process
+<br>
 
+## Building Process
 
 | I came up with this idea because I wanted to make a robot that uses AI to do something cool.
 | ---
