@@ -1,9 +1,6 @@
-# Rubik's Cube Robot
 ## Summary
-
-Hello! This is the code, datasets, and model weights for my Rubik's Cube solving robot.
-
 <img src=photos/FullRobotPhoto.jpg alt="Rubiks Cube Robot" width=700>
+Hello! This is the code, datasets, and model weights for my Rubik's Cube solving robot.
 
 The robot works like so:
 * You place a scrambled cube in a specific orientation
