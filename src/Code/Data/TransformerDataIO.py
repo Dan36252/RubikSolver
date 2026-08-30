@@ -213,12 +213,15 @@ def extract_from_raw_data(filepath, split_solutions=True, remove_jagged=True, lo
         return output_states, output_moves
 
 
-# Extracts the numeric identifier from a data file's name (e.g. "training.seq.99" -> 99).
-# Used to match a raw data file with its corresponding processed data file, since a plain
-# substring "contains" check would wrongly match "9" against "99".
+# Extracts the numeric identifier from a data file's name (e.g. "training.seq.99" -> 99,
+# "f2l.99.txt" -> 99). Used to match a raw data file with its corresponding processed data file,
+# since a plain substring "contains" check would wrongly match "9" against "99".
+# Only whole name segments that are entirely digits count, so digits that are part of a word - like
+# the "2" in the "f2l" prefix - are not mistaken for the file's number.
 def get_file_number(filename):
-    match = re.search(r"\d+", filename)
-    return int(match.group()) if match else None
+    for segment in re.split(r"[^0-9A-Za-z]+", filename):
+        if segment.isdigit(): return int(segment)
+    return None
 
 
 # Writes a pair of processed (states, moves) tensors to a file in TransformerData/F2LSolver.

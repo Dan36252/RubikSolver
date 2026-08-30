@@ -174,7 +174,7 @@ class CubeState:
         flat_data = CubeState.flatten_data(shaped_data)
         return flat_data
 
-    def move(self, move_letter):
+    def move(self, move_letter, just_trying=False):
         # move_letter can be R, L', U2, etc.
         turn_map = MAPS[move_letter]
         mappings = turn_map.split()
@@ -188,9 +188,12 @@ class CubeState:
             new_data[m] = self.flat_data[new_index]
         # print("New state:")
         # print(new_data)
-        self.flat_data = new_data
-        self.shaped_data = CubeState.shape_data(self.flat_data)
-        if self.encode: self.encoded_data = CubeState.encode_data(self.shaped_data)
+        if just_trying:
+            return new_data
+        else:
+            self.flat_data = new_data
+            self.shaped_data = CubeState.shape_data(self.flat_data)
+            if self.encode: self.encoded_data = CubeState.encode_data(self.shaped_data)
 
         # face_match = re.search("[A-Z]", move_letter)
         # if face_match != None:
@@ -216,6 +219,26 @@ class CubeState:
         new_cubestate = CubeState(data=copy.deepcopy(self.flat_data), encode=True, prev_state=self, prev_move=move_letter, g_cost=self.g_cost+1)
         new_cubestate.move(move_letter)
         return new_cubestate
+
+    def deepcopy(self):
+        # Returns an independent copy of this CubeState, so that moves applied to the copy do not
+        # affect the original. Copies the object directly rather than rebuilding through __init__,
+        # which would re-run the f2l masking over already-masked data.
+        return copy.deepcopy(self)
+
+    @staticmethod
+    def get_reverse_move(move_letter):
+        # Slice rather than index the move type, so that single-character moves like "R" (which have
+        # no move type suffix) yield "" instead of raising an IndexError.
+        face, move_type = move_letter[0], move_letter[1:]
+        reverse_type = None
+        if move_type == "":
+            reverse_type = "'"
+        elif move_type == "'":
+            reverse_type = ""
+        else:
+            reverse_type = "2"
+        return face + reverse_type
 
     @staticmethod
     def swap_faces(arr, i1, i2):
@@ -271,7 +294,7 @@ class CubeState:
                     #enc_string = enc_string + str(code[n]) + ", "
         #enc_string = enc_string[:-2] # Remove last comma
         #print(len(enc_string.split(",")))
-        return enc_list # The encoded data is Length 104.
+        return enc_list # The full encoded data is Length 104. Not sure about F2L only
 
 
 
