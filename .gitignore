@@ -1,8 +1,13 @@
 # created by virtualenv automatically
-src/RawData/
-src/NewProcessedData/
-src/ProcessedData/
-src/ProcessedDataOld/
+src/Data/Solver/RawData/
+src/Data/Solver/NewProcessedData/
+src/Data/Solver/ProcessedData/
+src/Data/Solver/ProcessedPlain/
+src/Data/Solver/ProcessedPrevAndRemaining/
+src/Data/Solver/EncodedF2LData/
+src/Data/Vision/
+src/Models/Solver/
+src/OldModels/
 unused-data/
 bin/
 lib/
@@ -13,3 +18,5 @@ src/training_*
 src/tmp
 src/ALLFaceData/
 src/NewestScans/
+src/EncodedValueWeights.pth
+src/Data/Solver/TransformerData/F2LSolver_model.pt

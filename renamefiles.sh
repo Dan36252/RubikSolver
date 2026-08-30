@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PREFIX="3-"
+PREFIX="6-"
 DIRECTORY="./"
 
 for filename in "$DIRECTORY"/*; do
