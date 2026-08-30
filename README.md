@@ -8,7 +8,7 @@ The robot is intended to work like so:
 * The computer runs an ML model to obtain a set of moves
 * The robot performs those moves to solve the cube
 
-Progress timeline:<br>
+Progress timeline:<br><br>
 12/3/25 - Got idea to make AI Rubik's Cube robot <br>
 12/16/25 - Trained MCP solver model #1 (Accuracy: 60.3%, Solve Rate: 0.0%) <br>
 12/17/25 - Trained MCP solver model #2 (Accuracy: 83.0%, Solve Rate: 0.0%) <br>
