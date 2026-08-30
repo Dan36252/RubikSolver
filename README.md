@@ -1,15 +1,26 @@
 ## Summary
 <img src=photos/FullRobotPhoto.jpg alt="Rubiks Cube Robot" width=700>
-Hello! This is the code, datasets, and model weights for my Rubik's Cube solving robot.
+Hello! This is the code for my Rubik's Cube solving robot. (Not all datasets and model weights are uploaded yet.)
 
-The robot works like so:
-* You place a scrambled cube in a specific orientation
-* Robot turns the cube so one face is towards the camera
-* Robot recognizes the colors on that face using a neural network
-* The rest of the faces are pointed at the camera and read
-* Once the robot knows the Rubik's cube configuration, it can start solving
-* For solving the First Two Layers (F2L) of the cube, the robot uses heuristic search to find the best combination of moves
-* For solving the rest of the cube, the robot uses a neural network trained to perform known formulas when given a cube state
+The robot is intended to work like so:
+* The robot scans each face of the cube with a camera (using a computer vision model)
+* The computer reconstructs the cube configuration in memory
+* The computer runs an ML model to obtain a set of moves
+* The robot performs those moves to solve the cube
+
+Progress timeline:
+* 12/3/25 - Got idea to make AI Rubik's Cube robot
+* 12/16/25 - Trained MCP solver model #1 (Accuracy: 60.3%, Solve Rate: 0.0%)
+* 12/17/25 - Trained MCP solver model #2 (Accuracy: 83.0%, Solve Rate: 0.0%)
+* 12/26/25 - Finished first robot prototype (CAD, 3D printing, connected servos to Jetson)
+* 12/30/25 - Began manually collecting image data for CV model
+* 1/4/26 - First automatic image data mass-collection for CV model
+* 1/6/26 - Trained MCP computer vision model (not accurate enough to reconstruct cube)
+* 2/27/26 - Trained CNN computer vision model (still not accurate enough)
+* 6/7/26 - Trained LSTM solver model #1 (Accuracy: 94.8%, Solve Rate: 2.0%)  YAY!
+* 7/12/26 - Trained LSTM solver model #2 with data masking (Accuracy: 97.0%, Solve Rate: 42.0%)
+* 8/24/26 - Trained Transformer solver model #1 (Accuracy: 97.4%, Solve Rate: 0.0%)
+* (Still working on robot!)
 
 <br><br>
 ## Building Process
