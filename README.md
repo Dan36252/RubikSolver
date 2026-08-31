@@ -78,5 +78,5 @@ Currently, the project is not finished. I still need to train a more reliable Vi
 <br><br>
 For now, while the project is still work-in-progress, here is a demo video, where the robot "solves" a Rubik's cube by following a predetermined formula that I wrote:
 VIDEO DEMO: [YouTube - Robot Following a Formula](https://youtu.be/MRaupFCNtyo)
-
+<br><br>
 Thank you, God Bless!
