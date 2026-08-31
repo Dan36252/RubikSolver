@@ -60,8 +60,13 @@ https://github.com/user-attachments/assets/1456aa78-bdb7-439f-9755-5622f268d804
 | ---
 | <br> Using only dense layers in the network allowed me to reach 95% accuracy, but when testing on the real robot, the model performed rather poorly. For example, it detected a mix of three different colors, when the Rubik's cube face was only red stickers.
 | <img src=photos/VisionExample2.jpg alt="Actual colors" height=200 align="left"> <img src=photos/VisionExample1.jpg alt="Computer prediction" height=200 align="left">
-| <br> My next idea is to use a Convolutional Neural Network instead. It will be able to identify the edges/boundaries between the stickers, and hopefully it will be easier to classify sampled-down data into the 9 different colors using this network.
-
+| <br> My next idea was to use a Convolutional Neural Network instead. I thought it would be able to identify the edges/boundaries between the stickers, and hopefully it will be easier to classify images whose resolution is sampled-down by the CNN. Although the model performed slightly better than the multi-layer peceptron (above), it was not accurate enough to scan and reconstruct the entire cube.
+| <br> Currently, I plan to improve the vision model's performance by implementing a transformer-based CNN, with the idea that variations in the lighting, reflections, and color-warping captured by the camera can be decoded if the model pays attention to all the pixels in the image at once. Another idea for improving the vision model is capturing all six sides of the cube and training the model to classify all six sides at once, which might help it compare all the colors on the cube and take their relative lighting/color warp into account.
+<br>
+| Then, I attempted to improve the Cube Solving Model.
+| ---
+| <br> As school was ending, I had more time to read, so I became interested in the idea of using Recurrent Neural Networks to analyze the moves already performed on the cube and classify which next move is best. After understanding how RNNs work and are trained, I moved on to exploring a better type of RNN - an LSTM. Seeing how an LSTM has both long-term and short-term memory, I thought it would be perfect for analyzing a long chain of Rubik's Cube moves (that were already performed on the cube), and outputting an even better-informed prediction of the next move. With that, I attempted to design a custom 3-layer LSTM model that also feeds its output into all hidden cells. The performance was surprising! It had a 97.0% move prediction accuracy, and it solved 21/50 cubes from the evaluation dataset (42%)!
+| <img src=
 Currently, I am just short of finishing the project. I still need to train a more reliable Vision model, and need to implement the main Rubik's Cube solving algorithm with the improvements I mentioned: using heuristic search for F2L and a formula-based neural network for the rest of the puzzle.
 
 By heuristic search, I mean this:
