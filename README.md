@@ -75,7 +75,7 @@ https://github.com/user-attachments/assets/1456aa78-bdb7-439f-9755-5622f268d804
 
 <br>
 Currently, the project is not finished. I still need to train a more reliable Vision model, and need to improve the main Rubik's Cube solving algorithm. Some improvements I want to try for the solver model is using heuristic search on top of the policy model to improve reliability, applying reinforcement learning to help the model learn to create patterns on the cube instead of just memorizing sequences of moves, and making the model predict how close it is to solving the cube, which could help the model understand its progress and what the correct move is better.
-
+<br><br>
 For now, while the project is still work-in-progress, here is a demo video, where the robot "solves" a Rubik's cube by following a predetermined formula that I wrote:
 VIDEO DEMO: [YouTube - Robot Following a Formula](https://youtu.be/MRaupFCNtyo)
 
