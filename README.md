@@ -68,7 +68,7 @@ https://github.com/user-attachments/assets/1456aa78-bdb7-439f-9755-5622f268d804
 | Then, I attempted to improve the Cube Solving Model.
 | ---
 | <br> As school was ending, I had more time to read, so I became interested in the idea of using Recurrent Neural Networks to analyze the moves already performed on the cube and classify which next move is best. After understanding how RNNs work and are trained, I moved on to exploring a better type of RNN - an LSTM. Seeing how an LSTM has both long-term and short-term memory, I thought it would be perfect for analyzing a long chain of Rubik's Cube moves (that were already performed on the cube), and outputting an even better-informed prediction of the next move. With that, I attempted to design a custom 3-layer LSTM model that also feeds its output into all hidden cells. The performance was surprising! It had a 97.0% move prediction accuracy, and it solved 21/50 cubes from the evaluation dataset (42%)!
-| <img src=photos/LSTMTrainResults.jpg alt="LSTM Model Training Results" height=200 align="left">
+| <img src=photos/LSTMTrainResults.png alt="LSTM Model Training Results" height=400 align="left">
 Currently, I am just short of finishing the project. I still need to train a more reliable Vision model, and need to implement the main Rubik's Cube solving algorithm with the improvements I mentioned: using heuristic search for F2L and a formula-based neural network for the rest of the puzzle.
 
 By heuristic search, I mean this:
